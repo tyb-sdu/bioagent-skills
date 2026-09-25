@@ -1,0 +1,21 @@
+{
+  "id": "rdkit",
+  "name": "RDKit",
+  "summary": "Molecular representations and cheminformatics utilities for computational chemistry workflows.",
+  "tasks": ["molecule-preparation", "chemical-descriptors", "ligand-preparation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": true,
+    "environment": "bio-rdkit",
+    "channel": "conda-forge",
+    "package": "rdkit=2026.03.6"
+  },
+  "verify": {"argv": ["python", "-c", "from rdkit import Chem; assert Chem.MolFromSmiles('CCO') is not None"]},
+  "notes": ["RDKit is a dependency for several structure and ligand preparation workflows; keep it isolated from incompatible Python stacks."],
+  "sources": [
+    {"type": "installation", "url": "https://www.rdkit.org/docs/Install.html"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/rdkit"},
+    {"type": "citation-guidance", "url": "https://www.rdkit.org/docs/Overview.html"}
+  ]
+}

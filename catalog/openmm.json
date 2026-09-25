@@ -1,0 +1,21 @@
+{
+  "id": "openmm",
+  "name": "OpenMM",
+  "summary": "Molecular dynamics simulation toolkit with CPU and optional GPU backends.",
+  "tasks": ["molecular-dynamics", "protein-simulation", "free-energy-workflows"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": true,
+    "environment": "bio-openmm",
+    "channel": "conda-forge",
+    "package": "openmm=8.6.1"
+  },
+  "verify": {"argv": ["python", "-m", "openmm.testInstallation"]},
+  "notes": ["The default recipe installs OpenMM in a fresh conda environment. GPU driver compatibility must be checked separately; do not install or replace drivers automatically."],
+  "sources": [
+    {"type": "installation", "url": "https://docs.openmm.org/latest/userguide/application/01_getting_started.html"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/openmm"},
+    {"type": "paper", "url": "https://doi.org/10.1371/journal.pcbi.1005659"}
+  ]
+}

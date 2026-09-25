@@ -1,0 +1,24 @@
+{
+  "id": "autodock-vina",
+  "name": "AutoDock Vina",
+  "summary": "Protein-small molecule docking executable.",
+  "tasks": ["protein-ligand-docking", "virtual-screening"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Choose an official release asset matching the operating system and CPU architecture.",
+      "Record its immutable release URL and digest before enabling automatic download.",
+      "Place the executable in a user-owned tool directory and run its --help command. Do not assume the Python vina bindings include the CLI executable."
+    ],
+    "verify_note": "Run the downloaded Vina executable with --help, then record its version and file hash."
+  },
+  "verify": {"argv": []},
+  "notes": ["The official guide explicitly separates installation of Python bindings from installation of the vina executable."],
+  "sources": [
+    {"type": "installation", "url": "https://autodock-vina.readthedocs.io/en/latest/installation.html"},
+    {"type": "releases", "url": "https://github.com/ccsb-scripps/AutoDock-Vina/releases"},
+    {"type": "paper", "url": "https://doi.org/10.1002/jcc.21334"}
+  ]
+}

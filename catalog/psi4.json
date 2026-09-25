@@ -1,0 +1,20 @@
+{
+  "id": "psi4",
+  "name": "Psi4",
+  "summary": "Open quantum chemistry package for electronic structure calculations.",
+  "tasks": ["quantum-chemistry", "electronic-structure", "molecular-energy"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": true,
+    "environment": "bio-psi4",
+    "channel": "conda-forge",
+    "package": "psi4=1.11"
+  },
+  "verify": {"argv": ["python", "-c", "import psi4; print(psi4.__version__)"]},
+  "notes": ["Package availability varies by architecture. Confirm the conda solver output for the user's platform before applying."],
+  "sources": [
+    {"type": "package", "url": "https://anaconda.org/conda-forge/psi4"},
+    {"type": "installation", "url": "https://psicode.org/installs/latest/"}
+  ]
+}

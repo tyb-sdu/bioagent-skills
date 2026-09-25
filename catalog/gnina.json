@@ -1,0 +1,24 @@
+{
+  "id": "gnina",
+  "name": "GNINA",
+  "summary": "Docking and CNN-based rescoring for protein-small molecule complexes.",
+  "tasks": ["protein-ligand-docking", "docking-rescoring", "virtual-screening"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Check the official releases for the binary recommended by the maintainers and confirm Linux or WSL compatibility.",
+      "Check GPU and driver requirements if the user expects accelerated CNN scoring.",
+      "Pin a release asset and its digest, install under a user-owned directory, and verify with gnina --help."
+    ],
+    "verify_note": "Run gnina --help and record the binary version, source release, and checksum."
+  },
+  "verify": {"argv": []},
+  "notes": ["The maintainers recommend a pre-built binary for most users; source compilation is a specialist route."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/gnina/gnina"},
+    {"type": "releases", "url": "https://github.com/gnina/gnina/releases"},
+    {"type": "paper", "url": "https://doi.org/10.1186/s13321-021-00522-2"}
+  ]
+}

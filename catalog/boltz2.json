@@ -1,0 +1,23 @@
+{
+  "id": "boltz2",
+  "name": "Boltz-2",
+  "summary": "Biomolecular structure and interaction modelling with optional affinity prediction.",
+  "tasks": ["protein-complex-modeling", "protein-ligand-modeling", "protein-nucleic-acid-modeling", "binding-affinity"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Create a fresh Python environment and follow the official PyPI installation instructions for boltz or boltz[cuda] after checking hardware.",
+      "Run boltz --help before any prediction; this checks the CLI without triggering a model run.",
+      "Before first inference, explain the separate model-weight and reference-data downloads, disk use, cache location, and any external MSA service choice."
+    ],
+    "verify_note": "Run boltz --help. A full inference test is a separate step because it may download weights and use substantial compute."
+  },
+  "verify": {"argv": []},
+  "notes": ["The official repository recommends a fresh Python environment. CPU execution is possible but much slower than CUDA."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/jwohlwend/boltz/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1101/2025.06.14.659707"}
+  ]
+}

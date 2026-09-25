@@ -1,0 +1,20 @@
+{
+  "id": "mdanalysis",
+  "name": "MDAnalysis",
+  "summary": "Python toolkit for analysing molecular dynamics trajectories.",
+  "tasks": ["trajectory-analysis", "molecular-dynamics", "protein-simulation"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": true,
+    "environment": "bio-mdanalysis",
+    "package": "MDAnalysis==2.10.0"
+  },
+  "verify": {"argv": ["python", "-c", "import MDAnalysis as mda; print(mda.__version__)"]},
+  "notes": ["The installer creates a fresh virtual environment in the current user's home directory. It does not add optional test data or analysis plugins."],
+  "sources": [
+    {"type": "installation", "url": "https://www.mdanalysis.org/pages/installation_quick_start/"},
+    {"type": "package", "url": "https://pypi.org/project/MDAnalysis/"},
+    {"type": "paper", "url": "https://doi.org/10.1002/jcc.21787"}
+  ]
+}

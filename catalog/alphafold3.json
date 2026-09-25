@@ -1,0 +1,24 @@
+{
+  "id": "alphafold3",
+  "name": "AlphaFold 3",
+  "summary": "Multimolecular structure prediction system with separately licensed model parameters.",
+  "tasks": ["protein-complex-modeling", "protein-ligand-modeling", "protein-nucleic-acid-modeling"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the current official code and model-parameter terms with the user before obtaining weights.",
+      "Keep model parameters in a user-controlled location; do not bundle, mirror, or redistribute them with these Skills.",
+      "Follow the official Docker installation guide only after hardware, storage, data, and allowed-use requirements are satisfied."
+    ],
+    "verify_note": "Use the official example input and installation checks only after the user has obtained the parameters under the applicable terms."
+  },
+  "verify": {"argv": []},
+  "notes": ["The published model-parameter terms restrict use; public code availability does not grant unrestricted weight redistribution."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/google-deepmind/alphafold3/blob/main/docs/installation.md"},
+    {"type": "terms", "url": "https://github.com/google-deepmind/alphafold3/blob/main/WEIGHTS_TERMS_OF_USE.md"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41586-024-07487-w"}
+  ]
+}

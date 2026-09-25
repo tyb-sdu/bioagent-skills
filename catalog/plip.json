@@ -1,0 +1,23 @@
+{
+  "id": "plip",
+  "name": "PLIP",
+  "summary": "Protein-ligand interaction profiler with DNA and RNA interaction support.",
+  "tasks": ["protein-ligand-interactions", "protein-nucleic-acid-interactions", "interaction-profiling"],
+  "install": {
+    "kind": "container",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Check an available container runtime and the official PLIP README for the current multi-architecture image.",
+      "Select an immutable image tag or digest and review host mount paths before downloading the image.",
+      "Test the published command on a small public PDB example; record the image digest and output directory."
+    ],
+    "verify_note": "Use the current official PLIP container quickstart and a small public PDB test."
+  },
+  "verify": {"argv": []},
+  "notes": ["PLIP's maintainers recommend containers because pip installation still depends on a working OpenBabel setup."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/pharmai/plip/blob/master/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1093/nar/gkab294"}
+  ]
+}

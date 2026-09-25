@@ -1,0 +1,27 @@
+# Software recipe format
+
+Each `catalog/<id>.json` records one tool, its approved installation route, a minimal verification step, and sources. IDs and filenames use lowercase letters, digits, and single hyphens.
+
+Required fields:
+
+| Field | Meaning |
+| --- | --- |
+| `id`, `name`, `summary` | Stable identifier and human-facing description |
+| `tasks` | Research tasks that justify offering this tool |
+| `install.kind` | `conda`, `python`, `binary`, `source`, `container`, `model-data`, or `restricted` |
+| `install.platforms` | Explicitly reviewed subset of `linux`, `macos`, `windows` |
+| `install.automatic` | `true` only for the currently executable conda/Python routes |
+| `verify.argv` | Argument vector for a basic test, never a shell command string |
+| `sources` | HTTPS links to maintainer documentation, package record, terms, and/or primary paper |
+
+Automated recipes additionally need `package` and `environment`; conda recipes need `channel: conda-forge`. They create an isolated environment and then run verification. A guidance-only recipe needs `steps` and `verify_note`. The presence of a paper or public GitHub repository alone is insufficient evidence for automatic installation.
+
+Before upgrading a guidance-only recipe to `automatic: true`:
+
+1. Check the current official installation instructions and the actual supported platform/architecture.
+2. Pin a suitable package version, release asset checksum, or container digest. Record the download size and any first-run asset downloads.
+3. Check license terms for code, weights, and databases separately.
+4. Run installation and verification on each declared platform. Record the tested platform, date, and version.
+5. Add a test covering plan construction, idempotence, and failure behavior.
+
+The first release intentionally implements automatic execution only for isolated conda/Python environments. Source builds, container images, binaries and model downloads remain guidance-only until their specific artifacts and platform behavior are verified.
