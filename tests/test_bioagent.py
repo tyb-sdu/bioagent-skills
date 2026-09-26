@@ -14,6 +14,42 @@ import bioagent  # noqa: E402
 
 
 class TerminalAgentTests(unittest.TestCase):
+    def test_named_tool_routes_without_ollama(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("请安装 GROMACS", model=None)
+        self.assertEqual(intent["tool_id"], "gromacs")
+        classify.assert_not_called()
+
+    def test_named_tool_takes_precedence_even_if_model_is_configured(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("安装 OpenMM", model="local:1")
+        self.assertEqual(intent["tool_id"], "openmm")
+        classify.assert_not_called()
+
+    def test_unique_chinese_task_routes_without_ollama(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("我需要蛋白和 DNA 对接工具", model=None)
+            recipe = bioagent.resolve_intent(intent, "我需要蛋白和 DNA 对接工具")
+        self.assertEqual(recipe["id"], "haddock3")
+        classify.assert_not_called()
+
+    def test_multiple_names_or_tasks_require_selection(self):
+        with self.assertRaises(bioagent.AgentError):
+            bioagent.route_request("比较 OpenMM 和 GROMACS", model=None)
+        with self.assertRaises(bioagent.AgentError):
+            bioagent.route_request("我需要分子动力学轨迹分析", model=None)
+
+    def test_unknown_request_without_model_does_not_guess(self):
+        with self.assertRaises(bioagent.AgentError):
+            bioagent.route_request("请安装一个神奇工具", model=None)
+
+    def test_model_cannot_replace_explicitly_named_tool(self):
+        with self.assertRaises(bioagent.AgentError):
+            bioagent.resolve_intent(
+                {"task_id": "molecular-dynamics", "tool_id": "openmm", "clarification": ""},
+                "请安装 GROMACS",
+            )
+
     def test_bundled_skills_are_discoverable(self):
         names = [source.name for source in bioagent.bundled_skills()]
         self.assertEqual(len(names), 10)
@@ -127,6 +163,8 @@ class TerminalAgentTests(unittest.TestCase):
     def test_apply_requires_exact_interactive_confirmation(self):
         answer = {"task_id": "molecular-dynamics", "tool_id": "openmm", "clarification": ""}
         with patch.object(bioagent, "classify_request", return_value=answer), patch.object(
+            bioagent.bioinstall.shutil, "which", return_value="conda"
+        ), patch.object(
             bioagent.sys.stdin, "isatty", return_value=True
         ), patch("builtins.input", return_value="yes"), patch.object(
             bioagent.bioinstall, "install_recipe"
@@ -153,6 +191,8 @@ class TerminalAgentTests(unittest.TestCase):
     def test_confirmed_auto_recipe_uses_reviewed_installer(self):
         answer = {"task_id": "molecular-dynamics", "tool_id": "openmm", "clarification": ""}
         with patch.object(bioagent, "classify_request", return_value=answer), patch.object(
+            bioagent.bioinstall.shutil, "which", return_value="conda"
+        ), patch.object(
             bioagent.sys.stdin, "isatty", return_value=True
         ), patch("builtins.input", return_value="INSTALL openmm"), patch.object(
             bioagent.bioinstall, "install_recipe"

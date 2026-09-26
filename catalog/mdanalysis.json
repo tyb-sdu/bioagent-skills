@@ -6,6 +6,9 @@
   "install": {
     "kind": "python",
     "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "min_python": "3.11",
+    "python_versions": ["3.11", "3.12", "3.13", "3.14"],
     "automatic": true,
     "environment": "bio-mdanalysis",
     "package": "MDAnalysis==2.10.0"
@@ -15,6 +18,7 @@
   "sources": [
     {"type": "installation", "url": "https://www.mdanalysis.org/pages/installation_quick_start/"},
     {"type": "package", "url": "https://pypi.org/project/MDAnalysis/"},
+    {"type": "package-release", "url": "https://pypi.org/pypi/MDAnalysis/2.10.0/json"},
     {"type": "paper", "url": "https://doi.org/10.1002/jcc.21787"}
   ]
 }

@@ -6,6 +6,7 @@
   "install": {
     "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
     "automatic": true,
     "environment": "bio-rdkit",
     "channel": "conda-forge",
@@ -16,6 +17,7 @@
   "sources": [
     {"type": "installation", "url": "https://www.rdkit.org/docs/Install.html"},
     {"type": "package", "url": "https://anaconda.org/conda-forge/rdkit"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/rdkit/2026.03.6"},
     {"type": "citation-guidance", "url": "https://www.rdkit.org/docs/Overview.html"}
   ]
 }

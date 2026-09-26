@@ -27,6 +27,7 @@ ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PACKAGE_PATTERN = re.compile(r"^[A-Za-z0-9_.+\[\],=<>!~-]+$")
 KINDS = {"conda", "python", "binary", "source", "container", "model-data", "restricted"}
 PLATFORMS = {"linux", "macos", "windows"}
+ARCHITECTURES = {"x86_64", "aarch64", "ppc64le"}
 
 
 class RecipeError(ValueError):
@@ -37,6 +38,43 @@ def current_platform() -> str:
     return {"Linux": "linux", "Darwin": "macos", "Windows": "windows"}.get(
         platform.system(), "unsupported"
     )
+
+
+def current_architecture() -> str:
+    machine = platform.machine().casefold()
+    return {
+        "amd64": "x86_64", "x64": "x86_64", "x86_64": "x86_64",
+        "arm64": "aarch64", "aarch64": "aarch64", "ppc64le": "ppc64le",
+    }.get(machine, machine)
+
+
+def current_python_version() -> tuple[int, int]:
+    return sys.version_info[:2]
+
+
+def target_status(recipe: dict) -> dict:
+    """Report known local blockers, not a guarantee that solving will succeed."""
+    install = recipe["install"]
+    reasons = []
+    system = current_platform()
+    architecture = current_architecture()
+    if system not in install["platforms"]:
+        reasons.append(f"Operating system {system} is not in the reviewed platforms")
+    elif "architectures" in install and architecture not in install["architectures"].get(system, []):
+        reasons.append(f"Architecture {architecture} is not reviewed for {system}")
+    if install["kind"] == "python" and install["automatic"]:
+        minimum = tuple(map(int, install["min_python"].split(".")))
+        version = current_python_version()
+        if version < minimum:
+            reasons.append(f"Python {install['min_python']}+ is required for this pinned package")
+        elif f"{version[0]}.{version[1]}" not in install["python_versions"]:
+            reasons.append("No reviewed wheel for Python " + f"{version[0]}.{version[1]}")
+    supported = not reasons
+    if not install["automatic"]:
+        reasons.append("This recipe is guidance-only")
+    elif install["kind"] == "conda" and not shutil.which("conda"):
+        reasons.append("conda is not on PATH")
+    return {"supported_here": supported, "ready_here": not reasons, "blocking_reasons": reasons}
 
 
 def validate_recipe(recipe: dict, path) -> None:
@@ -59,6 +97,15 @@ def validate_recipe(recipe: dict, path) -> None:
         raise RecipeError(f"{path.name}: invalid platforms")
     if not install["platforms"]:
         raise RecipeError(f"{path.name}: platforms cannot be empty")
+    architectures = install.get("architectures")
+    if install.get("automatic") or architectures is not None:
+        if not isinstance(architectures, dict) or set(architectures) != set(install["platforms"]):
+            raise RecipeError(f"{path.name}: architectures must cover every listed platform")
+        if not all(
+            isinstance(values, list) and values and set(values) <= ARCHITECTURES
+            for values in architectures.values()
+        ):
+            raise RecipeError(f"{path.name}: invalid architecture list")
     if not isinstance(install.get("automatic"), bool):
         raise RecipeError(f"{path.name}: automatic must be boolean")
     if install["automatic"] and install["kind"] not in {"conda", "python"}:
@@ -72,6 +119,14 @@ def validate_recipe(recipe: dict, path) -> None:
             raise RecipeError(f"{path.name}: invalid environment name")
         if install["kind"] == "conda" and install.get("channel") != "conda-forge":
             raise RecipeError(f"{path.name}: automated conda channel must be conda-forge")
+        if install["kind"] == "python" and not re.fullmatch(r"3\.[0-9]{1,2}", install.get("min_python", "")):
+            raise RecipeError(f"{path.name}: automated Python package needs min_python")
+        if install["kind"] == "python" and (
+            not isinstance(install.get("python_versions"), list)
+            or not install["python_versions"]
+            or not all(isinstance(value, str) and re.fullmatch(r"3\.[0-9]{1,2}", value) for value in install["python_versions"])
+        ):
+            raise RecipeError(f"{path.name}: automated Python package needs reviewed python_versions")
     elif not isinstance(install.get("steps"), list) or not install["steps"] or not all(
         isinstance(step, str) and step.strip() for step in install["steps"]
     ):
@@ -122,13 +177,14 @@ def suggest_recipes(task: str) -> dict:
         if task not in recipe["tasks"]:
             continue
         install = recipe["install"]
+        status = target_status(recipe)
         candidates.append({
             "id": recipe["id"],
             "name": recipe["name"],
             "summary": recipe["summary"],
             "kind": install["kind"],
             "automatic": install["automatic"],
-            "supported_here": current_platform() in install["platforms"],
+            **status,
         })
     candidates.sort(key=lambda item: (not item["supported_here"], item["id"]))
     return {
@@ -160,12 +216,12 @@ def resolve_verify(recipe: dict) -> list[str]:
 
 def build_plan(recipe: dict) -> dict:
     install = recipe["install"]
-    supported_here = current_platform() in install["platforms"]
+    status = target_status(recipe)
     result = {
         "id": recipe["id"],
         "name": recipe["name"],
         "kind": install["kind"],
-        "supported_here": supported_here,
+        **status,
         "automatic": install["automatic"],
         "sources": recipe["sources"],
         "notes": recipe.get("notes", []),
@@ -254,10 +310,10 @@ def install_recipe(recipe: dict, apply: bool) -> None:
     if not apply:
         print("Preview only. Pass --apply to install into a new isolated environment.")
         return
-    if not plan["supported_here"]:
-        raise RecipeError("This recipe does not support the current operating system")
     if not plan["automatic"]:
         raise RecipeError("This recipe provides reviewed guidance; automated installation is not available")
+    if not plan["ready_here"]:
+        raise RecipeError("Local prerequisites are not met: " + "; ".join(plan["blocking_reasons"]))
     install = recipe["install"]
     if install["kind"] == "conda":
         if not shutil.which("conda"):
@@ -307,6 +363,7 @@ def main() -> int:
             data = {
                 "platform": current_platform(),
                 "architecture": platform.machine(),
+                "normalized_architecture": current_architecture(),
                 "python": sys.version.split()[0],
                 "conda": shutil.which("conda"),
                 "docker": shutil.which("docker"),
@@ -323,7 +380,7 @@ def main() -> int:
         elif args.command == "verify":
             recipe = load_recipe(args.tool_id)
             plan = build_plan(recipe)
-            if not plan["supported_here"] or not plan["automatic"]:
+            if not plan["ready_here"]:
                 raise RecipeError("Automated verification is not available for this recipe here")
             run(plan["verification_command"])
             print("Verification passed")

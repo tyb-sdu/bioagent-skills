@@ -6,7 +6,8 @@ computations or require an operator-owned inference server.
 ```text
 User request (Chinese or English)
   -> scripts/bioagent.py
-  -> downloaded local model via Ollama loopback API (classification only)
+  -> exact-name / conservative offline task routing
+  -> optional downloaded local model via Ollama loopback API (classification only)
   -> validate task/tool IDs against catalog/*.json
   -> show reviewed recipe, sources, requirements and plan
   -> optional --apply + exact interactive confirmation
@@ -16,9 +17,11 @@ User request (Chinese or English)
 
 The model's output is data, not executable code. It cannot add package names,
 commands, URLs, or new recipes. The entry point accesses only
-`127.0.0.1:11434`; proxy variables are ignored. It requires a named model
-reported as downloaded by the local Ollama `tags` endpoint and rejects model
-names containing `cloud`. Users should still check Ollama's own model and
+`127.0.0.1:11434`; proxy variables are ignored. Ollama is optional when an
+exact reviewed software name or a supported offline task phrase is recognized.
+Other requests require a named model reported as downloaded by the local
+Ollama `tags` endpoint; model names containing `cloud` are rejected. Users
+should still check Ollama's own model and
 privacy settings. No software is installed merely by sending a natural-language
 request, and noninteractive `--apply` is disabled.
 
@@ -37,7 +40,11 @@ previews copying Skills to a user-chosen discovery path; `--apply` performs the
 copy and refuses any name collision. Wheel installation does not automatically
 register Skills with other agents. Exported Skills still need access to the
 reviewed `bioinstall` executable or a repository checkout. Users still need
-Python, Git for cloning, and Ollama plus a downloaded compatible model for
-natural-language routing. Conda is needed for the automatic conda recipes.
+Python, Git for cloning, and optionally Ollama plus a downloaded compatible
+model for broader natural-language routing. Conda is needed for the automatic
+conda recipes. For automatic recipes, `supported_here` checks the reviewed
+OS/architecture and pinned Python requirement; guidance-only recipes have only
+an OS-level check. `ready_here` additionally checks known local prerequisites.
+Neither proves that dependency solving or installation will succeed.
 The deterministic `bioinstall` command works without Ollama. Software runs on
 the user's machine or chosen cluster, not on the maintainer's server.

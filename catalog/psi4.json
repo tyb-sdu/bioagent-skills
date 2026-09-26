@@ -6,6 +6,7 @@
   "install": {
     "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
     "automatic": true,
     "environment": "bio-psi4",
     "channel": "conda-forge",
@@ -15,6 +16,7 @@
   "notes": ["Package availability varies by architecture. Confirm the conda solver output for the user's platform before applying."],
   "sources": [
     {"type": "package", "url": "https://anaconda.org/conda-forge/psi4"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/psi4/1.11"},
     {"type": "installation", "url": "https://psicode.org/installs/latest/"}
   ]
 }

@@ -56,7 +56,7 @@ class LoopbackIntegrationTests(unittest.TestCase):
             base = f"http://127.0.0.1:{server.server_port}/api/"
             with patch.object(bioagent, "OLLAMA_BASE", base), patch.object(
                 bioagent.sys, "argv", [
-                    "bioagent", "ask", "安装 OpenMM", "--model", "local-model:1"
+                    "bioagent", "ask", "我需要选择分子动力学模拟程序", "--model", "local-model:1"
                 ]
             ), patch.object(bioagent.bioinstall, "install_recipe") as install, contextlib.redirect_stdout(
                 io.StringIO()

@@ -26,6 +26,22 @@ else:
 OLLAMA_BASE = "http://127.0.0.1:11434/api/"
 MAX_RESPONSE_BYTES = 1_000_000
 SKILL_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+TASK_PHRASES = {
+    "protein-nucleic-acid-docking": (
+        "蛋白dna对接", "蛋白和dna对接", "蛋白与dna对接", "蛋白rna对接",
+        "蛋白和rna对接", "蛋白与rna对接", "蛋白核酸对接",
+        "proteindnadocking", "proteinrnadocking",
+    ),
+    "protein-peptide-docking": (
+        "蛋白多肽对接", "蛋白与多肽对接", "蛋白肽对接", "proteinpeptidedocking",
+    ),
+    "protein-ligand-docking": (
+        "蛋白小分子对接", "蛋白与小分子对接", "proteinliganddocking",
+    ),
+    "molecular-dynamics": ("分子动力学", "moleculardynamics"),
+    "trajectory-analysis": ("轨迹分析", "trajectoryanalysis"),
+    "quantum-chemistry": ("量子化学", "quantumchemistry"),
+}
 SKILL_ROOT = (
     resources.files("bioagent_skills.skill_docs")
     if __package__ == "bioagent_skills"
@@ -35,6 +51,55 @@ SKILL_ROOT = (
 
 class AgentError(ValueError):
     pass
+
+
+def validate_query(query: str) -> None:
+    if not query.strip() or len(query) > 2000:
+        raise AgentError("Request must contain 1–2000 characters")
+
+
+def mentioned_tools(query: str) -> list[str]:
+    found = []
+    for recipe in bioinstall.all_recipes():
+        labels = {recipe["id"].casefold(), recipe["name"].casefold()}
+        if any(
+            re.search(r"(?<![a-z0-9])" + re.escape(label) + r"(?![a-z0-9])", query.casefold())
+            for label in labels
+        ):
+            found.append(recipe["id"])
+    return found
+
+
+def offline_intent(query: str) -> dict | None:
+    """Recognize only exact reviewed names and a few unambiguous task phrases."""
+    validate_query(query)
+    tools = mentioned_tools(query)
+    if len(tools) > 1:
+        raise AgentError("Multiple reviewed tools were named: " + ", ".join(tools) + ". Specify one")
+    if tools:
+        return {"task_id": "", "tool_id": tools[0], "clarification": ""}
+    normalized = re.sub(r"[\s\W_]+", "", query.casefold(), flags=re.UNICODE)
+    matches = sorted({
+        task_id for task_id, phrases in TASK_PHRASES.items()
+        if any(phrase in normalized for phrase in phrases)
+    })
+    if len(matches) > 1:
+        raise AgentError("Multiple reviewed tasks were mentioned: " + ", ".join(matches) + ". Specify one")
+    if matches:
+        return {"task_id": matches[0], "tool_id": "", "clarification": ""}
+    return None
+
+
+def route_request(query: str, model: str | None) -> dict:
+    """Prefer exact software names; optionally classify task requests locally."""
+    intent = offline_intent(query)
+    if intent and intent["tool_id"]:
+        return intent
+    if model:
+        return classify_request(query, model)
+    if intent:
+        return intent
+    raise AgentError("No exact reviewed tool or task phrase matched. Name a tool, use 'bioinstall tasks', or provide --model")
 
 
 def bundled_skills() -> list:
@@ -159,8 +224,7 @@ def classification_schema(recipes: list[dict]) -> dict:
 
 
 def classify_request(query: str, model: str) -> dict:
-    if not query.strip() or len(query) > 2000:
-        raise AgentError("Request must contain 1–2000 characters")
+    validate_query(query)
     require_local_model(model)
     recipes = bioinstall.all_recipes()
     catalog = [
@@ -170,11 +234,17 @@ def classify_request(query: str, model: str) -> dict:
             "summary": item["summary"],
             "tasks": item["tasks"],
             "platforms": item["install"]["platforms"],
+            "architectures": item["install"].get("architectures", {}),
             "automatic": item["install"]["automatic"],
         }
         for item in recipes
     ]
-    host = {"platform": bioinstall.current_platform(), "conda_on_path": bool(shutil.which("conda"))}
+    host = {
+        "platform": bioinstall.current_platform(),
+        "architecture": bioinstall.current_architecture(),
+        "python": f"{sys.version_info.major}.{sys.version_info.minor}",
+        "conda_on_path": bool(shutil.which("conda")),
+    }
     payload = {
         "model": model,
         "messages": [
@@ -215,6 +285,11 @@ def classify_request(query: str, model: str) -> dict:
 def resolve_intent(intent: dict, query: str) -> dict:
     task_id = intent["task_id"]
     tool_id = intent["tool_id"]
+    explicitly_named = mentioned_tools(query)
+    if len(explicitly_named) > 1:
+        raise AgentError("Multiple reviewed tools were named: " + ", ".join(explicitly_named) + ". Specify one")
+    if explicitly_named and tool_id != explicitly_named[0]:
+        raise AgentError("Selected tool does not match the software explicitly named by the user")
     clarification = intent["clarification"].strip()
     if clarification:
         raise AgentError("More information needed: specify a research task or a reviewed software name")
@@ -244,8 +319,8 @@ def resolve_intent(intent: dict, query: str) -> dict:
     return bioinstall.load_recipe(candidates[0]["id"])
 
 
-def handle_request(query: str, model: str, apply: bool) -> None:
-    intent = classify_request(query, model)
+def handle_request(query: str, model: str | None, apply: bool) -> None:
+    intent = route_request(query, model)
     recipe = resolve_intent(intent, query)
     plan = bioinstall.build_plan(recipe)
     print(json.dumps({"classification": intent, "plan": plan}, ensure_ascii=False, indent=2))
@@ -254,8 +329,8 @@ def handle_request(query: str, model: str, apply: bool) -> None:
         return
     if not plan["automatic"]:
         raise AgentError("This recipe is guidance-only; there is no automatic installation to apply")
-    if not plan["supported_here"]:
-        raise AgentError("This recipe is not supported on the current operating system")
+    if not plan["ready_here"]:
+        raise AgentError("Local prerequisites are not met: " + "; ".join(plan["blocking_reasons"]))
     if not sys.stdin.isatty():
         raise AgentError("Interactive confirmation is required; noninteractive installation is disabled")
     phrase = f"INSTALL {recipe['id']}"
@@ -277,7 +352,7 @@ def main() -> int:
     export.add_argument("--apply", action="store_true", help="Copy after preview and collision checks")
     ask = sub.add_parser("ask", help="Classify a natural-language request and preview a reviewed recipe")
     ask.add_argument("query")
-    ask.add_argument("--model", required=True, help="Exact downloaded local Ollama model name")
+    ask.add_argument("--model", help="Local Ollama model for requests without an exact reviewed software name")
     ask.add_argument("--apply", action="store_true", help="Offer installation after interactive confirmation")
     args = parser.parse_args()
     try:

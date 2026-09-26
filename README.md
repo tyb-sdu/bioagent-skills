@@ -16,7 +16,7 @@
 
 ## 使用
 
-需要 Python 3.10+。自动安装 conda 配方还需要用户电脑已经安装 conda；Windows 用户使用 Linux-only 配方前需要先准备 Linux/WSL 环境。以下命令在仓库根目录执行：
+运行安装器需要 Python 3.10+，但固定版本的 MDAnalysis 2.10.0 要求 Python 3.11+，目前仅审核了 Python 3.11–3.14 的预编译包。自动安装 conda 配方还需要用户电脑已经安装 conda；Windows 用户使用 Linux-only 配方前需要先准备 Linux/WSL 环境。以下命令在仓库根目录执行：
 
 ```bash
 git clone https://github.com/tyb-sdu/bioagent-skills.git
@@ -55,20 +55,29 @@ python scripts/bioinstall.py install openmm --apply
 python scripts/bioinstall.py verify openmm
 ```
 
-`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
+`plan` 和 `suggest` 的 `supported_here` 对自动配方检查当前操作系统、处理器架构和已知 Python 版本；引导型配方仅检查已列出的操作系统。`ready_here` 还要求本机已有安装前提（例如 conda），具体障碍见 `blocking_reasons`。这不是依赖求解或安装成功的保证。`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
 
-### 本地模型终端入口
+### 终端智能体入口：离线规则或本地模型
 
-先按照 [Ollama 官方指南](https://docs.ollama.com/quickstart)在用户电脑上安装 Ollama，并由用户自行选择一个适合本机内存、支持结构化输出的**本地**模型。将以下 `MODEL_NAME` 替换成所选模型的真实名称；下载命令见 [Ollama CLI 文档](https://docs.ollama.com/cli)。本项目不预设模型名称、不自动拉取模型，也不需要云端 API 密钥。
+明确指定软件名，以及少量无歧义的中英文科研任务，可以直接离线匹配已审核配方，**不需要 Ollama 或模型额度**：
+
+```bash
+python scripts/bioagent.py ask "安装 OpenMM"
+python scripts/bioagent.py ask "我需要蛋白和 DNA 对接工具"
+```
+
+若出现多个软件或任务，入口会要求用户选定，不会擅自替换明确指定的软件。离线词表只是保守入口，不是完整自然语言理解；未命中时可显式传入本机模型。
+
+如需更灵活的任务表述，先按照 [Ollama 官方指南](https://docs.ollama.com/quickstart)在用户电脑上安装 Ollama，并由用户自行选择一个适合本机内存、支持结构化输出的**本地**模型。将以下 `MODEL_NAME` 替换成所选模型的真实名称；下载命令见 [Ollama CLI 文档](https://docs.ollama.com/cli)。本项目不预设模型名称、不自动拉取模型，也不需要云端 API 密钥。
 
 ```bash
 ollama pull MODEL_NAME
 python scripts/bioagent.py models
 python scripts/bioagent.py ask --model MODEL_NAME "我需要安装蛋白和 DNA 对接工具"
-python scripts/bioagent.py ask --model MODEL_NAME "安装 OpenMM" --apply
+python scripts/bioagent.py ask "安装 OpenMM" --apply
 ```
 
-第一条 `ask` 只返回已审核配方和安装预览；`--apply` 也仅对自动安装配方有效，并会在交互式终端要求输入 `INSTALL <软件ID>` 才执行。引导型配方只显示步骤，不能被模型升级为自动执行。请求只发送到本机 `127.0.0.1:11434`；模型只能从仓库的任务/软件 ID 中分类，不能向安装器提供任意命令、包名或网址。未安装 Ollama 时仍可直接使用上面的 `bioinstall.py` 命令。该入口是首版单轮任务路由器，不支持任意软件、连续对话或自动执行引导型流程。
+第一条 `ask` 只返回已审核配方和安装预览；`--apply` 也仅对自动安装配方有效，并会在交互式终端要求输入 `INSTALL <软件ID>` 才执行。引导型配方只显示步骤，不能被模型升级为自动执行。只有使用 `--model` 且离线规则未直接识别软件名时，才把请求发送到本机 `127.0.0.1:11434`；模型只能从仓库的任务/软件 ID 中分类，不能向安装器提供任意命令、包名或网址。该入口是首版单轮任务路由器，不支持任意软件、连续对话或自动执行引导型流程。
 
 本地推理可以避免使用本项目的云端模型额度，但模型下载、磁盘、电力和用户电脑的内存/算力并非零成本。模型及软件各自的许可证仍需由使用者核对。
 

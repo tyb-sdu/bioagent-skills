@@ -6,6 +6,7 @@
   "install": {
     "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
     "automatic": true,
     "environment": "bio-openmm",
     "channel": "conda-forge",
@@ -16,6 +17,7 @@
   "sources": [
     {"type": "installation", "url": "https://docs.openmm.org/latest/userguide/application/01_getting_started.html"},
     {"type": "package", "url": "https://anaconda.org/conda-forge/openmm"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/openmm/8.6.1"},
     {"type": "paper", "url": "https://doi.org/10.1371/journal.pcbi.1005659"}
   ]
 }

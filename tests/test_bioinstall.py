@@ -28,7 +28,49 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(result["task"], "protein-nucleic-acid-docking")
         self.assertEqual([item["id"] for item in result["candidates"]], ["haddock3"])
         self.assertFalse(result["candidates"][0]["supported_here"])
+        self.assertFalse(result["candidates"][0]["ready_here"])
         run_command.assert_not_called()
+
+    def test_windows_arm64_is_not_reported_as_ready_for_win64_conda_build(self):
+        recipe = bioinstall.load_recipe("openmm")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="aarch64"
+        ), patch.object(bioinstall.shutil, "which", return_value="conda"):
+            plan = bioinstall.build_plan(recipe)
+        self.assertFalse(plan["supported_here"])
+        self.assertFalse(plan["ready_here"])
+        self.assertIn("Architecture", plan["blocking_reasons"][0])
+
+    def test_missing_conda_is_distinct_from_unsupported_platform(self):
+        recipe = bioinstall.load_recipe("openmm")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall.shutil, "which", return_value=None):
+            plan = bioinstall.build_plan(recipe)
+        self.assertTrue(plan["supported_here"])
+        self.assertFalse(plan["ready_here"])
+        self.assertIn("conda is not on PATH", plan["blocking_reasons"])
+
+    def test_pinned_mdanalysis_requires_python_311(self):
+        recipe = bioinstall.load_recipe("mdanalysis")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 10)):
+            plan = bioinstall.build_plan(recipe)
+            with self.assertRaises(bioinstall.RecipeError), contextlib.redirect_stdout(io.StringIO()):
+                bioinstall.install_recipe(recipe, apply=True)
+        self.assertFalse(plan["supported_here"])
+        self.assertFalse(plan["ready_here"])
+        self.assertIn("Python 3.11+", plan["blocking_reasons"][0])
+
+    def test_unreviewed_future_python_wheel_is_not_assumed_available(self):
+        recipe = bioinstall.load_recipe("mdanalysis")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 15)):
+            plan = bioinstall.build_plan(recipe)
+        self.assertFalse(plan["supported_here"])
+        self.assertIn("No reviewed wheel", plan["blocking_reasons"][0])
 
     def test_unknown_task_does_not_resolve_to_arbitrary_package(self):
         with self.assertRaises(bioinstall.RecipeError):

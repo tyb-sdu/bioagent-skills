@@ -6,6 +6,7 @@
   "install": {
     "kind": "conda",
     "platforms": ["linux", "macos"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"]},
     "automatic": true,
     "environment": "bio-gromacs",
     "channel": "conda-forge",
@@ -15,6 +16,7 @@
   "notes": ["This is a general conda-forge build. MPI, GPU acceleration, and architecture-specific tuning require a separate build review."],
   "sources": [
     {"type": "package", "url": "https://anaconda.org/conda-forge/gromacs"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/gromacs/2026.3"},
     {"type": "installation", "url": "https://manual.gromacs.org/current/install-guide/index.html"},
     {"type": "paper", "url": "https://doi.org/10.1016/j.softx.2015.06.001"}
   ]
