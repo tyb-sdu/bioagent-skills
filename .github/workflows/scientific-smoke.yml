@@ -1,0 +1,58 @@
+name: Scientific software installation smoke tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - catalog/pdbfixer.json
+      - catalog/autodock-vina.json
+      - scripts/bioinstall.py
+      - .github/workflows/scientific-smoke.yml
+  pull_request:
+    paths:
+      - catalog/pdbfixer.json
+      - catalog/autodock-vina.json
+      - scripts/bioinstall.py
+      - .github/workflows/scientific-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: ${{ matrix.tool }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {tool: pdbfixer, os: ubuntu-latest}
+          - {tool: pdbfixer, os: windows-latest}
+          - {tool: pdbfixer, os: macos-latest}
+          - {tool: autodock-vina, os: ubuntu-latest}
+          - {tool: autodock-vina, os: macos-latest}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: conda-incubator/setup-miniconda@v4
+        with:
+          miniforge-version: latest
+          activate-environment: ""
+          auto-activate: false
+      - name: Inspect local prerequisites
+        run: python scripts/bioinstall.py doctor
+      - name: Install reviewed recipe in a disposable runner
+        run: python scripts/bioinstall.py install ${{ matrix.tool }} --apply
+      - name: Repeat the basic verification
+        run: python scripts/bioinstall.py verify ${{ matrix.tool }}
+      - name: Preserve verified installation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: receipt-${{ matrix.tool }}-${{ matrix.os }}
+          path: ~/.bioagent-skills/receipts/*.json
+          if-no-files-found: error
+          retention-days: 14

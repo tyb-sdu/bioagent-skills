@@ -72,6 +72,29 @@ class CatalogTests(unittest.TestCase):
         self.assertFalse(plan["supported_here"])
         self.assertIn("No reviewed wheel", plan["blocking_reasons"][0])
 
+    def test_pdbfixer_has_reviewed_conda_route(self):
+        recipe = bioinstall.load_recipe("pdbfixer")
+        self.assertTrue(recipe["install"]["automatic"])
+        self.assertEqual(recipe["install"]["package"], "pdbfixer=1.12")
+        plan = bioinstall.build_plan(recipe)
+        self.assertEqual(plan["commands"][0][-1], "pdbfixer=1.12")
+
+    def test_vina_windows_shows_manual_fallback_but_cannot_auto_apply(self):
+        recipe = bioinstall.load_recipe("autodock-vina")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall.shutil, "which", return_value="conda"), patch.object(
+            bioinstall, "run"
+        ) as run_command:
+            plan = bioinstall.build_plan(recipe)
+            with self.assertRaises(bioinstall.RecipeError), contextlib.redirect_stdout(io.StringIO()):
+                bioinstall.install_recipe(recipe, apply=True)
+        self.assertFalse(plan["supported_here"])
+        self.assertTrue(plan["manual_fallback_here"])
+        self.assertIn("manual_fallback", plan)
+        self.assertNotIn("commands", plan)
+        run_command.assert_not_called()
+
     def test_unknown_task_does_not_resolve_to_arbitrary_package(self):
         with self.assertRaises(bioinstall.RecipeError):
             bioinstall.suggest_recipes("some-unreviewed-task")
@@ -80,6 +103,9 @@ class CatalogTests(unittest.TestCase):
         for recipe in bioinstall.all_recipes():
             plan = bioinstall.build_plan(recipe)
             if not plan["automatic"]:
+                self.assertNotIn("commands", plan)
+                continue
+            if not plan["supported_here"]:
                 self.assertNotIn("commands", plan)
                 continue
             self.assertIn("=", recipe["install"]["package"])

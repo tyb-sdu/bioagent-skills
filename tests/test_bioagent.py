@@ -20,6 +20,13 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertEqual(intent["tool_id"], "gromacs")
         classify.assert_not_called()
 
+    def test_reviewed_vina_alias_routes_to_exact_recipe_without_model(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("请安装 Vina", model=None)
+            recipe = bioagent.resolve_intent(intent, "请安装 Vina")
+        self.assertEqual(recipe["id"], "autodock-vina")
+        classify.assert_not_called()
+
     def test_named_tool_takes_precedence_even_if_model_is_configured(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("安装 OpenMM", model="local:1")

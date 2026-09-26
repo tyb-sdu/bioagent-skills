@@ -26,8 +26,8 @@ privacy settings. No software is installed merely by sending a natural-language
 request, and noninteractive `--apply` is disabled.
 
 Automatic installation is intentionally narrower than task recognition. As of
-this release, 5 reviewed conda/PyPI recipes can be applied to fresh isolated
-environments; the other 13 are guidance-only because of weights, licenses,
+this release, 7 reviewed conda/PyPI recipes can be applied to fresh isolated
+environments on their reviewed targets; the other 11 are guidance-only because of weights, licenses,
 platform artifacts, or unverified dependency resolution. A successful import
 or `--help` is an installation smoke test, not evidence that scientific results
 are valid. The local model's classification may be wrong, so users must inspect
@@ -46,5 +46,7 @@ conda recipes. For automatic recipes, `supported_here` checks the reviewed
 OS/architecture and pinned Python requirement; guidance-only recipes have only
 an OS-level check. `ready_here` additionally checks known local prerequisites.
 Neither proves that dependency solving or installation will succeed.
+AutoDock Vina has a read-only Windows `manual_fallback`; it never grants
+automatic installation on that platform.
 The deterministic `bioinstall` command works without Ollama. Software runs on
 the user's machine or chosen cluster, not on the maintainer's server.

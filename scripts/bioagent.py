@@ -61,7 +61,7 @@ def validate_query(query: str) -> None:
 def mentioned_tools(query: str) -> list[str]:
     found = []
     for recipe in bioinstall.all_recipes():
-        labels = {recipe["id"].casefold(), recipe["name"].casefold()}
+        labels = {label.casefold() for label in (recipe["id"], recipe["name"], *recipe.get("aliases", []))}
         if any(
             re.search(r"(?<![a-z0-9])" + re.escape(label) + r"(?![a-z0-9])", query.casefold())
             for label in labels
@@ -302,9 +302,7 @@ def resolve_intent(intent: dict, query: str) -> dict:
             raise AgentError(f"Model returned an unreviewed tool: {tool_id}") from error
         if task_id and task_id not in recipe["tasks"]:
             raise AgentError("Model chose a tool outside the selected task")
-        if not task_id and not any(
-            label.casefold() in query.casefold() for label in (tool_id, recipe["name"])
-        ):
+        if not task_id and tool_id not in explicitly_named:
             raise AgentError("Model chose a tool without a matching task or explicit software name")
         return recipe
     if not task_id:

@@ -74,7 +74,13 @@ def target_status(recipe: dict) -> dict:
         reasons.append("This recipe is guidance-only")
     elif install["kind"] == "conda" and not shutil.which("conda"):
         reasons.append("conda is not on PATH")
-    return {"supported_here": supported, "ready_here": not reasons, "blocking_reasons": reasons}
+    fallback = install.get("manual_fallback", {})
+    return {
+        "supported_here": supported,
+        "ready_here": not reasons,
+        "blocking_reasons": reasons,
+        "manual_fallback_here": system in fallback.get("platforms", []),
+    }
 
 
 def validate_recipe(recipe: dict, path) -> None:
@@ -86,6 +92,11 @@ def validate_recipe(recipe: dict, path) -> None:
         raise RecipeError(f"{path.name}: invalid id")
     if Path(path.name).stem != recipe["id"]:
         raise RecipeError(f"{path.name}: filename must match id")
+    if "aliases" in recipe and (
+        not isinstance(recipe["aliases"], list)
+        or not all(isinstance(alias, str) and alias.strip() and len(alias) <= 100 for alias in recipe["aliases"])
+    ):
+        raise RecipeError(f"{path.name}: aliases must be a list of nonempty names")
     if not isinstance(recipe["tasks"], list) or not recipe["tasks"] or not all(
         isinstance(task, str) and ID_PATTERN.fullmatch(task) for task in recipe["tasks"]
     ):
@@ -127,6 +138,19 @@ def validate_recipe(recipe: dict, path) -> None:
             or not all(isinstance(value, str) and re.fullmatch(r"3\.[0-9]{1,2}", value) for value in install["python_versions"])
         ):
             raise RecipeError(f"{path.name}: automated Python package needs reviewed python_versions")
+        fallback = install.get("manual_fallback")
+        if fallback is not None and (
+            not isinstance(fallback, dict)
+            or not isinstance(fallback.get("platforms"), list)
+            or not fallback["platforms"]
+            or not set(fallback["platforms"]) <= PLATFORMS
+            or not isinstance(fallback.get("steps"), list)
+            or not fallback["steps"]
+            or not all(isinstance(step, str) and step.strip() for step in fallback["steps"])
+            or not isinstance(fallback.get("verify_note"), str)
+            or not fallback["verify_note"].strip()
+        ):
+            raise RecipeError(f"{path.name}: invalid manual_fallback")
     elif not isinstance(install.get("steps"), list) or not install["steps"] or not all(
         isinstance(step, str) and step.strip() for step in install["steps"]
     ):
@@ -226,9 +250,13 @@ def build_plan(recipe: dict) -> dict:
         "sources": recipe["sources"],
         "notes": recipe.get("notes", []),
     }
+    if not status["ready_here"] and status["manual_fallback_here"]:
+        result["manual_fallback"] = install["manual_fallback"]
     if not install["automatic"]:
         result["steps"] = install["steps"]
         result["verify"] = install.get("verify_note", "Follow the official verification instructions.")
+        return result
+    if not status["supported_here"]:
         return result
     if install["kind"] == "conda":
         result["commands"] = [[

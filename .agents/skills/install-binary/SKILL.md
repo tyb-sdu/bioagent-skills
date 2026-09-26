@@ -1,6 +1,6 @@
 ---
 name: install-binary
-description: Guide installation of a maintainer-published precompiled biological software executable. Use for binary recipes such as AutoDock Vina and GNINA after checking operating system, architecture, release asset, and checksum.
+description: Guide installation of a maintainer-published precompiled biological software executable. Use for binary recipes or a catalog manual_fallback, such as AutoDock Vina on Windows, after checking the release asset and checksum.
 license: MIT
 compatibility: Requires a terminal and an official release asset for the host platform.
 ---
