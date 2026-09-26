@@ -31,6 +31,9 @@ def validate(path: Path) -> None:
         raise ValueError(f"{path}: invalid name")
     if not 1 <= len(description) <= 1024:
         raise ValueError(f"{path}: invalid description")
+    compatibility = fields.get("compatibility")
+    if compatibility is not None and not 1 <= len(compatibility) <= 500:
+        raise ValueError(f"{path}: invalid compatibility")
     if fields.get("license") != "MIT":
         raise ValueError(f"{path}: license should match repository")
     if not parts[2].strip():

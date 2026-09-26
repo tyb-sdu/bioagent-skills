@@ -7,6 +7,6 @@ compatibility: Requires access to the installed environment or the tool's user-o
 
 # Installation verification
 
-Use `python scripts/bioinstall.py verify <id>` for automated conda/Python recipes. For guidance-only routes, run the non-computational smoke test listed in the catalog and compare output with the maintainer's current instructions. Record actual version, executable path, host platform, source link, environment name, and any first-run downloads still pending. If verification fails, report the failed command; do not mark installation complete.
+Use `verify <id>` through the reviewed `bioinstall` command (or `python scripts/bioinstall.py` from the repository root) for automated conda/Python recipes. For guidance-only routes, run the non-computational smoke test shown by `plan <id>` and compare output with the maintainer's current instructions. Record actual version, executable path, host platform, source link, environment name, and any first-run downloads still pending. If verification fails, report the failed command; do not mark installation complete.
 
 An import, `--version`, or `--help` check establishes basic operability only. A scientific benchmark, force-field validation, or model-quality test is a separate research workflow. Preserve the install receipt and logs needed to reproduce or diagnose the environment. Do not delete existing environments as a troubleshooting shortcut.

@@ -2,6 +2,7 @@ import contextlib
 import io
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -13,6 +14,48 @@ import bioagent  # noqa: E402
 
 
 class TerminalAgentTests(unittest.TestCase):
+    def test_bundled_skills_are_discoverable(self):
+        names = [source.name for source in bioagent.bundled_skills()]
+        self.assertEqual(len(names), 10)
+        self.assertIn("bio-install", names)
+        self.assertIn("verify-install", names)
+
+    def test_skill_export_preview_does_not_write(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-export-") as temp_root:
+            destination = Path(temp_root) / "project" / ".agents" / "skills"
+            with contextlib.redirect_stdout(io.StringIO()) as output:
+                bioagent.export_skills(str(destination), apply=False)
+            self.assertFalse(destination.exists())
+            self.assertIn('"action": "preview"', output.getvalue())
+
+    def test_skill_export_copies_exact_bundled_files(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-export-") as temp_root:
+            destination = Path(temp_root) / "project" / ".agents" / "skills"
+            with contextlib.redirect_stdout(io.StringIO()):
+                bioagent.export_skills(str(destination), apply=True)
+            for source in bioagent.bundled_skills():
+                self.assertEqual(
+                    (destination / source.name / "SKILL.md").read_bytes(),
+                    source.joinpath("SKILL.md").read_bytes(),
+                )
+
+    def test_skill_export_collision_blocks_all_copies(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-export-") as temp_root:
+            destination = Path(temp_root) / "skills"
+            existing = destination / "bio-install"
+            existing.mkdir(parents=True)
+            marker = existing / "SKILL.md"
+            marker.write_text("existing user skill", encoding="utf-8")
+            with self.assertRaises(bioagent.AgentError), contextlib.redirect_stdout(io.StringIO()):
+                bioagent.export_skills(str(destination), apply=True)
+            self.assertEqual(marker.read_text(encoding="utf-8"), "existing user skill")
+            self.assertEqual([path.name for path in destination.iterdir()], ["bio-install"])
+
+    def test_skill_export_rejects_broad_destination(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-export-") as temp_root:
+            with self.assertRaises(bioagent.AgentError):
+                bioagent.export_skills(temp_root, apply=True)
+
     def test_schema_only_allows_reviewed_ids(self):
         schema = bioagent.classification_schema(bioagent.bioinstall.all_recipes())
         self.assertIn("haddock3", schema["properties"]["tool_id"]["enum"])

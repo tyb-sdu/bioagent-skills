@@ -31,9 +31,12 @@ are valid. The local model's classification may be wrong, so users must inspect
 the displayed plan and sources before confirming an install.
 
 This is a minimal single-turn terminal agent, not a packaged desktop app or a
-general computer-use agent. The two CLI commands and catalog are installable
-as a Python wheel; the repository's `.agents/skills/` files are not automatically
-registered with other agents by that Python installation. Users still need
+general computer-use agent. The two CLI commands, 18 recipes, and 10 Skills are
+installable as a Python wheel. `bioagent skills export --to <path>/skills`
+previews copying Skills to a user-chosen discovery path; `--apply` performs the
+copy and refuses any name collision. Wheel installation does not automatically
+register Skills with other agents. Exported Skills still need access to the
+reviewed `bioinstall` executable or a repository checkout. Users still need
 Python, Git for cloning, and Ollama plus a downloaded compatible model for
 natural-language routing. Conda is needed for the automatic conda recipes.
 The deterministic `bioinstall` command works without Ollama. Software runs on

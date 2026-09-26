@@ -27,3 +27,8 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/bioagent-smoke/bin/bioinstall" validate
           "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" --help
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" skills list
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" skills export --to "$RUNNER_TEMP/bioagent-export/.agents/skills"
+          test ! -e "$RUNNER_TEMP/bioagent-export/.agents/skills"
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" skills export --to "$RUNNER_TEMP/bioagent-export/.agents/skills" --apply
+          test -f "$RUNNER_TEMP/bioagent-export/.agents/skills/bio-install/SKILL.md"

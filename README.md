@@ -32,7 +32,17 @@ python -m venv .venv
 .\.venv\Scripts\bioagent.exe --help
 ```
 
-Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令及 18 个配方会进入虚拟环境，不依赖运行时所在目录；Agent Skills 原文件仍在克隆仓库的 `.agents/skills/`，**尚未随 Python 安装包自动注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、18 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+
+要把 Skill 放进另一个支持 Agent Skills 的项目，先查明该智能体的 Skill 发现目录，再显式导出。例如在 Windows PowerShell 中：
+
+```powershell
+.\.venv\Scripts\bioagent.exe skills list
+.\.venv\Scripts\bioagent.exe skills export --to "C:\ResearchProject\.agents\skills"
+.\.venv\Scripts\bioagent.exe skills export --to "C:\ResearchProject\.agents\skills" --apply
+```
+
+前一条 `export` 仅预览，`--apply` 才复制；遇到任何同名 Skill 会整体拒绝，不会覆盖。导出只是复制文件，**不会替其他智能体修改配置或保证其自动发现**。使用导出的 Skill 时，还需让智能体能调用本项目虚拟环境中的 `bioinstall` 命令；若只使用克隆仓库，则在仓库根目录运行 `python scripts/bioinstall.py`。
 
 ```bash
 python scripts/bioinstall.py doctor

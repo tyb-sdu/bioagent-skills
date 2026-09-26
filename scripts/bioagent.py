@@ -8,7 +8,10 @@ package specs, URLs, or permission to install. Execution remains in bioinstall.
 from __future__ import annotations
 
 import argparse
+from importlib import resources
 import json
+from pathlib import Path
+import re
 import shutil
 import sys
 from urllib.error import HTTPError, URLError
@@ -22,10 +25,71 @@ else:
 
 OLLAMA_BASE = "http://127.0.0.1:11434/api/"
 MAX_RESPONSE_BYTES = 1_000_000
+SKILL_NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SKILL_ROOT = (
+    resources.files("bioagent_skills.skill_docs")
+    if __package__ == "bioagent_skills"
+    else Path(__file__).resolve().parents[1] / ".agents" / "skills"
+)
 
 
 class AgentError(ValueError):
     pass
+
+
+def bundled_skills() -> list:
+    skills = sorted(
+        (
+            path for path in SKILL_ROOT.iterdir()
+            if path.is_dir() and SKILL_NAME.fullmatch(path.name)
+            and path.joinpath("SKILL.md").is_file()
+        ),
+        key=lambda path: path.name,
+    )
+    if not skills:
+        raise AgentError("No bundled Agent Skills found")
+    return skills
+
+
+def copy_skill_tree(source, destination: Path) -> None:
+    """Copy package resources without requiring a concrete filesystem source."""
+    destination.mkdir(exist_ok=False)
+    for item in source.iterdir():
+        target = destination / item.name
+        if item.is_dir():
+            copy_skill_tree(item, target)
+        elif item.is_file():
+            with target.open("xb") as output:
+                output.write(item.read_bytes())
+
+
+def export_skills(destination: str, apply: bool) -> None:
+    requested = Path(destination).expanduser()
+    if requested.name != "skills" or requested.is_symlink():
+        raise AgentError("Choose an explicit destination directory named 'skills'")
+    target_root = requested.resolve(strict=False)
+    if target_root.exists() and not target_root.is_dir():
+        raise AgentError("Skill destination is not a directory")
+    skills = bundled_skills()
+    collisions = [
+        source.name for source in skills
+        if (target_root / source.name).exists() or (target_root / source.name).is_symlink()
+    ]
+    if collisions:
+        raise AgentError("Existing skills would be overwritten: " + ", ".join(collisions))
+    print(json.dumps({
+        "destination": str(target_root),
+        "skills": [source.name for source in skills],
+        "action": "export" if apply else "preview",
+        "note": "No existing Skill directory will be replaced. Check your terminal agent's discovery path before exporting.",
+    }, ensure_ascii=False, indent=2))
+    if not apply:
+        print("Preview only. Add --apply to copy bundled Skills to this destination.")
+        return
+    target_root.mkdir(parents=True, exist_ok=True)
+    for source in skills:
+        copy_skill_tree(source, target_root / source.name)
+    print(f"Exported {len(skills)} Skills to {target_root}")
 
 
 def local_json(endpoint: str, payload: dict | None = None, timeout: int = 10) -> dict:
@@ -205,6 +269,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Local-model terminal agent for reviewed biological software")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("models", help="List downloaded local Ollama models")
+    skills = sub.add_parser("skills", help="List or export bundled Agent Skills")
+    skill_sub = skills.add_subparsers(dest="skill_command", required=True)
+    skill_sub.add_parser("list", help="List bundled Skill names")
+    export = skill_sub.add_parser("export", help="Copy Skills to a user-chosen discovery directory")
+    export.add_argument("--to", required=True, help="Destination directory named skills")
+    export.add_argument("--apply", action="store_true", help="Copy after preview and collision checks")
     ask = sub.add_parser("ask", help="Classify a natural-language request and preview a reviewed recipe")
     ask.add_argument("query")
     ask.add_argument("--model", required=True, help="Exact downloaded local Ollama model name")
@@ -217,9 +287,15 @@ def main() -> int:
                 print(f"{item['name']}\t{item.get('size', 0)} bytes")
             if not models:
                 print("No downloaded local models found. Install Ollama and download a local model first.")
+        elif args.command == "skills":
+            if args.skill_command == "list":
+                for source in bundled_skills():
+                    print(source.name)
+            else:
+                export_skills(args.to, args.apply)
         else:
             handle_request(args.query, args.model, args.apply)
-    except (AgentError, bioinstall.RecipeError) as error:
+    except (AgentError, bioinstall.RecipeError, OSError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 2
     return 0
