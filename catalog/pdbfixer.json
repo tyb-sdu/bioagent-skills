@@ -1,0 +1,23 @@
+{
+  "id": "pdbfixer",
+  "name": "PDBFixer",
+  "summary": "Prepare biomolecular structures by finding and repairing common PDB-file issues before simulation.",
+  "tasks": ["structure-preparation", "molecular-dynamics", "protein-simulation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Check the official PDBFixer README and the package build for the current operating system and architecture.",
+      "Create a fresh conda environment and install the reviewed pdbfixer build from conda-forge, as recommended by the maintainer.",
+      "Inspect a small test structure and record any automatic changes before using repaired coordinates in a scientific workflow."
+    ],
+    "verify_note": "Import pdbfixer in the new environment and run the maintainer's basic usage example on a disposable input copy."
+  },
+  "verify": {"argv": []},
+  "notes": ["PDB repair may change atoms, protonation, or missing regions; preserve the original structure and review the output before simulation."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/openmm/pdbfixer/blob/master/README.md"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/pdbfixer"}
+  ]
+}

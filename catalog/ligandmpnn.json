@@ -1,0 +1,23 @@
+{
+  "id": "ligandmpnn",
+  "name": "LigandMPNN",
+  "summary": "Protein sequence design conditioned on atomic context such as small molecules, nucleic acids, and metals.",
+  "tasks": ["protein-sequence-design", "protein-ligand-design", "protein-nucleic-acid-design"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Review the official README and clone a specific maintainer commit into a user-chosen directory.",
+      "Create the recommended isolated Python environment, then inspect and install the repository requirements after choosing CPU or GPU PyTorch.",
+      "Review get_model_params.sh and the checkpoint destinations before downloading weights; record the selected model and disk use."
+    ],
+    "verify_note": "Check that run.py and the selected checkpoint exist, then run a documented example only after the user approves the input and compute cost."
+  },
+  "verify": {"argv": []},
+  "notes": ["The repository also contains ProteinMPNN inference code. Protein–nucleic-acid design here is sequence design conditioned on nucleic-acid atoms, not docking."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/dauparas/LigandMPNN/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41592-025-02626-1"}
+  ]
+}

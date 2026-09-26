@@ -1,0 +1,23 @@
+{
+  "id": "rfdiffusion",
+  "name": "RFdiffusion",
+  "summary": "Generative protein-backbone design, including binder and motif-scaffolding workflows.",
+  "tasks": ["protein-backbone-design", "protein-interface-design", "binder-design"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Choose the maintainer's documented conda or Docker route and pin the repository commit or image digest before installation.",
+      "Check CUDA, container runtime, available GPU memory, and the SE(3)-Transformer dependency against the official instructions.",
+      "Review the model-download script and weight URLs, then obtain only the weights needed for the chosen design task into a user-controlled directory."
+    ],
+    "verify_note": "Run the maintainer's installation/example checks only after weights and hardware are ready; a design run is not a lightweight install test."
+  },
+  "verify": {"argv": []},
+  "notes": ["Repository examples include model downloads and substantial GPU computation. Do not run the weight-download script or install CUDA drivers without explicit user approval."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/RosettaCommons/RFdiffusion/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41586-023-06415-8"}
+  ]
+}

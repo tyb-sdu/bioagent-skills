@@ -1,0 +1,24 @@
+{
+  "id": "diffdock",
+  "name": "DiffDock",
+  "summary": "Diffusion-based protein–small-molecule pose prediction with separate model checkpoints.",
+  "tasks": ["protein-ligand-docking", "protein-ligand-modeling"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Choose the maintainer's conda or Docker instructions and pin the repository commit or container digest; distinguish the current DiffDock-L model from the older publication model.",
+      "Check GPU compatibility and inspect environment.yml or Dockerfile before installation in an isolated location.",
+      "Review checkpoint download locations, cache use, and license before first inference; do not assume the code installation includes all weights."
+    ],
+    "verify_note": "Run a maintainer-provided example only after the selected model checkpoint and compute requirements are confirmed."
+  },
+  "verify": {"argv": []},
+  "notes": ["The repository README says the default model is DiffDock-L; cite and compare the correct model version in research use."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/gcorso/DiffDock/blob/main/README.md"},
+    {"type": "paper", "url": "https://arxiv.org/abs/2210.01776"},
+    {"type": "paper", "url": "https://arxiv.org/abs/2402.18396"}
+  ]
+}

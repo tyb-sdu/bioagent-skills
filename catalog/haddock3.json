@@ -1,0 +1,25 @@
+{
+  "id": "haddock3",
+  "name": "HADDOCK3",
+  "summary": "Integrative biomolecular docking and refinement, including protein complexes and protein–DNA/RNA systems.",
+  "tasks": ["protein-protein-docking", "protein-peptide-docking", "protein-nucleic-acid-docking", "integrative-modeling"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the official Python installation guide and check the current Python and operating-system requirements.",
+      "Create a fresh virtual environment and install a deliberately selected haddock3 release from PyPI; record the version and dependency resolution.",
+      "For protein–DNA/RNA docking, read the separate nucleic-acid best-practice guide before preparing structures or restraints."
+    ],
+    "verify_note": "Run haddock3 --help in the isolated environment; use the official test configuration separately for a functional run."
+  },
+  "verify": {"argv": []},
+  "notes": ["A PyPI installation route is documented, but this recipe is guidance-only until a version and each declared platform are validated here."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/haddocking/haddock3/blob/main/docs/pages/PYTHON.md"},
+    {"type": "workflow", "url": "https://www.bonvinlab.org/haddock3-user-manual/bpg/dna.html"},
+    {"type": "workflow", "url": "https://github.com/haddocking/haddock3/blob/main/docs/pages/examples.md"},
+    {"type": "paper", "url": "https://doi.org/10.1021/acs.jcim.5c00969"}
+  ]
+}

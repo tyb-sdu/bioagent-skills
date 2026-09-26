@@ -14,9 +14,23 @@ SPEC.loader.exec_module(bioinstall)
 class CatalogTests(unittest.TestCase):
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 10)
+        self.assertGreaterEqual(len(recipes), 18)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
+
+    def test_task_suggestions_are_read_only_and_include_platform_state(self):
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "run"
+        ) as run_command:
+            result = bioinstall.suggest_recipes("protein-nucleic-acid-docking")
+        self.assertEqual(result["task"], "protein-nucleic-acid-docking")
+        self.assertEqual([item["id"] for item in result["candidates"]], ["haddock3"])
+        self.assertFalse(result["candidates"][0]["supported_here"])
+        run_command.assert_not_called()
+
+    def test_unknown_task_does_not_resolve_to_arbitrary_package(self):
+        with self.assertRaises(bioinstall.RecipeError):
+            bioinstall.suggest_recipes("some-unreviewed-task")
 
     def test_automatic_recipes_use_isolated_environments(self):
         for recipe in bioinstall.all_recipes():

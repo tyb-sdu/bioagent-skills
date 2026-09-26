@@ -1,0 +1,23 @@
+{
+  "id": "openfe",
+  "name": "OpenFE",
+  "summary": "Open-source alchemical free-energy calculations for molecular design.",
+  "tasks": ["free-energy-workflows", "protein-ligand-free-energy"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Check the official installation guide; it currently describes POSIX systems and recommends micromamba.",
+      "Choose the maintained package or conda-lock route, review the dependencies and applicable CUDA terms, and create a fresh environment.",
+      "Check the selected simulation backend and available CPU/GPU resources before running a tutorial."
+    ],
+    "verify_note": "Run the installation guide's import or CLI check in the isolated environment, then a small official tutorial separately."
+  },
+  "verify": {"argv": []},
+  "notes": ["Free-energy calculations are computationally expensive and require scientifically appropriate system preparation; installation alone does not validate a protocol."],
+  "sources": [
+    {"type": "installation", "url": "https://docs.openfree.energy/en/stable/installation.html"},
+    {"type": "repository", "url": "https://github.com/OpenFreeEnergy/openfe"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "lightdock",
+  "name": "LightDock",
+  "summary": "Macromolecular docking with optional experimental restraints.",
+  "tasks": ["protein-protein-docking", "integrative-modeling"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Check the current maintainer README and platform/dependency requirements; Windows is not officially supported there.",
+      "Create an isolated Python environment and install a reviewed LightDock release with pip; consider optional MPI support only if requested.",
+      "Use the official tutorials to prepare receptor, ligand, and any restraints."
+    ],
+    "verify_note": "Run the documented command-line help and, if requested, a small maintainer tutorial in a scratch directory."
+  },
+  "verify": {"argv": []},
+  "notes": ["Do not infer that a docking score establishes physical binding. MPI and native dependencies vary by system."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/lightdock/lightdock/blob/master/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1093/bioinformatics/btx555"}
+  ]
+}

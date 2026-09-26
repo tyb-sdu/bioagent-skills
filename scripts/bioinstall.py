@@ -47,8 +47,10 @@ def validate_recipe(recipe: dict, path: Path) -> None:
         raise RecipeError(f"{path.name}: invalid id")
     if path.stem != recipe["id"]:
         raise RecipeError(f"{path.name}: filename must match id")
-    if not isinstance(recipe["tasks"], list) or not recipe["tasks"]:
-        raise RecipeError(f"{path.name}: tasks must be a nonempty list")
+    if not isinstance(recipe["tasks"], list) or not recipe["tasks"] or not all(
+        isinstance(task, str) and ID_PATTERN.fullmatch(task) for task in recipe["tasks"]
+    ):
+        raise RecipeError(f"{path.name}: tasks must be a nonempty list of task IDs")
     install = recipe["install"]
     if not isinstance(install, dict) or install.get("kind") not in KINDS:
         raise RecipeError(f"{path.name}: unsupported install kind")
@@ -69,13 +71,17 @@ def validate_recipe(recipe: dict, path: Path) -> None:
             raise RecipeError(f"{path.name}: invalid environment name")
         if install["kind"] == "conda" and install.get("channel") != "conda-forge":
             raise RecipeError(f"{path.name}: automated conda channel must be conda-forge")
-    elif not isinstance(install.get("steps"), list) or not install["steps"]:
-        raise RecipeError(f"{path.name}: guidance-only recipe needs steps")
+    elif not isinstance(install.get("steps"), list) or not install["steps"] or not all(
+        isinstance(step, str) and step.strip() for step in install["steps"]
+    ):
+        raise RecipeError(f"{path.name}: guidance-only recipe needs nonempty steps")
     verify = recipe["verify"]
     if not isinstance(verify, dict) or not isinstance(verify.get("argv"), list):
         raise RecipeError(f"{path.name}: verify.argv must be a list")
     if not all(isinstance(arg, str) and arg for arg in verify["argv"]):
         raise RecipeError(f"{path.name}: verify.argv must contain nonempty strings")
+    if install["automatic"] and not verify["argv"]:
+        raise RecipeError(f"{path.name}: automatic recipe needs a verification command")
     if not isinstance(recipe["sources"], list) or not recipe["sources"]:
         raise RecipeError(f"{path.name}: at least one source is required")
     for source in recipe["sources"]:
@@ -96,6 +102,35 @@ def load_recipe(tool_id: str) -> dict:
 
 def all_recipes() -> list[dict]:
     return [load_recipe(path.stem) for path in sorted(CATALOG.glob("*.json"))]
+
+
+def all_tasks() -> list[str]:
+    return sorted({task for recipe in all_recipes() for task in recipe["tasks"]})
+
+
+def suggest_recipes(task: str) -> dict:
+    """Return task-matched candidates; this is not a scientific recommendation."""
+    if task not in all_tasks():
+        raise RecipeError(f"Unknown task: {task}. Run 'tasks' to see reviewed task IDs")
+    candidates = []
+    for recipe in all_recipes():
+        if task not in recipe["tasks"]:
+            continue
+        install = recipe["install"]
+        candidates.append({
+            "id": recipe["id"],
+            "name": recipe["name"],
+            "summary": recipe["summary"],
+            "kind": install["kind"],
+            "automatic": install["automatic"],
+            "supported_here": current_platform() in install["platforms"],
+        })
+    candidates.sort(key=lambda item: (not item["supported_here"], item["id"]))
+    return {
+        "task": task,
+        "candidates": candidates,
+        "warning": "Task matching does not establish scientific suitability. Review inputs, methods, license, hardware, and plan before installing.",
+    }
 
 
 def env_python(environment: str) -> Path:
@@ -239,8 +274,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Plan reviewed biological software installations")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help="List curated software recipes")
+    sub.add_parser("tasks", help="List reviewed research-task IDs")
     sub.add_parser("validate", help="Validate all catalog entries")
     sub.add_parser("doctor", help="Inspect local prerequisites without changing them")
+    suggestion = sub.add_parser("suggest", help="Show read-only candidates for a reviewed task ID")
+    suggestion.add_argument("task_id")
     for command in ("plan", "install", "verify"):
         subparser = sub.add_parser(command)
         subparser.add_argument("tool_id")
@@ -252,6 +290,11 @@ def main() -> int:
             for recipe in all_recipes():
                 install = recipe["install"]
                 print(f"{recipe['id']:<18} {install['kind']:<12} {'auto' if install['automatic'] else 'guide':<5} {recipe['name']}")
+        elif args.command == "tasks":
+            for task in all_tasks():
+                print(task)
+        elif args.command == "suggest":
+            print(json.dumps(suggest_recipes(args.task_id), ensure_ascii=False, indent=2))
         elif args.command == "validate":
             recipes = all_recipes()
             print(f"Validated {len(recipes)} recipes")

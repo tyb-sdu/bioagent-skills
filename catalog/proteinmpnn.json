@@ -1,0 +1,23 @@
+{
+  "id": "proteinmpnn",
+  "name": "ProteinMPNN",
+  "summary": "Backbone-conditioned protein sequence design using pretrained neural-network weights.",
+  "tasks": ["protein-sequence-design", "protein-interface-design"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Clone the maintainer repository at a reviewed commit into a user-chosen directory and create a separate Python environment.",
+      "Install the PyTorch and NumPy versions appropriate for the selected CPU or GPU, following the maintainer README and the PyTorch compatibility guidance.",
+      "Inspect the included weight files and choose the full-backbone or CA-only model deliberately; do not fetch or replace weights silently."
+    ],
+    "verify_note": "In the repository and isolated environment, run python protein_mpnn_run.py --help, then a maintainer example only if the user approves the computation."
+  },
+  "verify": {"argv": []},
+  "notes": ["Sequence design is not structure prediction. A model run requires an input protein backbone and selected weights."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/dauparas/ProteinMPNN/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1126/science.add2187"}
+  ]
+}
