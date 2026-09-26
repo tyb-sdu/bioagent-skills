@@ -1,4 +1,6 @@
+import contextlib
 import importlib.util
+import io
 import json
 import unittest
 from pathlib import Path
@@ -49,14 +51,18 @@ class CatalogTests(unittest.TestCase):
 
     def test_preview_never_executes_commands(self):
         recipe = bioinstall.load_recipe("openmm")
-        with patch.object(bioinstall, "run") as run_command, patch.object(bioinstall, "write_receipt") as write_receipt:
+        with patch.object(bioinstall, "run") as run_command, patch.object(
+            bioinstall, "write_receipt"
+        ) as write_receipt, contextlib.redirect_stdout(io.StringIO()):
             bioinstall.install_recipe(recipe, apply=False)
         run_command.assert_not_called()
         write_receipt.assert_not_called()
 
     def test_guidance_only_recipe_cannot_apply(self):
         recipe = bioinstall.load_recipe("alphafold3")
-        with patch.object(bioinstall, "current_platform", return_value="linux"):
+        with patch.object(bioinstall, "current_platform", return_value="linux"), contextlib.redirect_stdout(
+            io.StringIO()
+        ):
             with self.assertRaises(bioinstall.RecipeError):
                 bioinstall.install_recipe(recipe, apply=True)
 
@@ -64,7 +70,7 @@ class CatalogTests(unittest.TestCase):
         recipe = bioinstall.load_recipe("openmm")
         with patch.object(bioinstall, "shutil") as fake_shutil, patch.object(
             bioinstall, "conda_environment_exists", return_value=True
-        ), patch.object(bioinstall, "run") as run_command:
+        ), patch.object(bioinstall, "run") as run_command, contextlib.redirect_stdout(io.StringIO()):
             fake_shutil.which.return_value = "conda"
             with self.assertRaises(bioinstall.RecipeError):
                 bioinstall.install_recipe(recipe, apply=True)

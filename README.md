@@ -1,6 +1,6 @@
 # BioAgent Skills
 
-面向**用户自己电脑上的终端智能体**的生物计算软件安装 Skill 包。项目帮助智能体根据科研任务和本机条件选择软件、预览安装方案、安装到隔离环境，并运行基础验收。计算任务仍在用户选择的计算机或集群执行。
+面向**用户自己电脑上的终端智能体**的生物计算软件安装 Skill 包。项目帮助智能体根据科研任务和本机条件选择软件、预览安装方案、安装到隔离环境，并运行基础验收。计算任务仍在用户选择的计算机或集群执行。仓库还提供一个最小化的本地模型终端入口 `scripts/bioagent.py`。
 
 本仓库依据 [Agent Skills 规范](https://agentskills.io/specification)编写，Skill 放在 `.agents/skills/`，软件的具体来源与安装方式放在 `catalog/`。支持读取该目录的终端智能体可以按需加载 Skill；其他智能体需要将这些 Skill 接入其自身的加载机制。Skill 是指令和工作流，需要宿主智能体提供命令执行能力。
 
@@ -19,6 +19,11 @@
 需要 Python 3.10+。自动安装 conda 配方还需要用户电脑已经安装 conda；Windows 用户使用 Linux-only 配方前需要先准备 Linux/WSL 环境。以下命令在仓库根目录执行：
 
 ```bash
+git clone https://github.com/tyb-sdu/bioagent-skills.git
+cd bioagent-skills
+```
+
+```bash
 python scripts/bioinstall.py doctor
 python scripts/bioinstall.py list
 python scripts/bioinstall.py tasks
@@ -30,6 +35,23 @@ python scripts/bioinstall.py verify openmm
 ```
 
 `install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
+
+### 本地模型终端入口
+
+先按照 [Ollama 官方指南](https://docs.ollama.com/quickstart)在用户电脑上安装 Ollama，并由用户自行选择一个适合本机内存、支持结构化输出的**本地**模型。将以下 `MODEL_NAME` 替换成所选模型的真实名称；下载命令见 [Ollama CLI 文档](https://docs.ollama.com/cli)。本项目不预设模型名称、不自动拉取模型，也不需要云端 API 密钥。
+
+```bash
+ollama pull MODEL_NAME
+python scripts/bioagent.py models
+python scripts/bioagent.py ask --model MODEL_NAME "我需要安装蛋白和 DNA 对接工具"
+python scripts/bioagent.py ask --model MODEL_NAME "安装 OpenMM" --apply
+```
+
+第一条 `ask` 只返回已审核配方和安装预览；`--apply` 也仅对自动安装配方有效，并会在交互式终端要求输入 `INSTALL <软件ID>` 才执行。引导型配方只显示步骤，不能被模型升级为自动执行。请求只发送到本机 `127.0.0.1:11434`；模型只能从仓库的任务/软件 ID 中分类，不能向安装器提供任意命令、包名或网址。未安装 Ollama 时仍可直接使用上面的 `bioinstall.py` 命令。该入口是首版单轮任务路由器，不支持任意软件、连续对话或自动执行引导型流程。
+
+本地推理可以避免使用本项目的云端模型额度，但模型下载、磁盘、电力和用户电脑的内存/算力并非零成本。模型及软件各自的许可证仍需由使用者核对。
+
+完整的本机执行边界与当前局限见[架构说明](docs/ARCHITECTURE.md)。
 
 对于只提供引导的工具：
 
