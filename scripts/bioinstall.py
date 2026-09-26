@@ -8,6 +8,7 @@ Only isolated conda and Python environments are executable in this release.
 from __future__ import annotations
 
 import argparse
+from importlib import resources
 import json
 import os
 import platform
@@ -20,7 +21,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CATALOG = ROOT / "catalog"
+CATALOG = resources.files("bioagent_skills.catalog") if __package__ == "bioagent_skills" else ROOT / "catalog"
 INSTALL_ROOT = Path.home() / ".bioagent-skills"
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PACKAGE_PATTERN = re.compile(r"^[A-Za-z0-9_.+\[\],=<>!~-]+$")
@@ -38,14 +39,14 @@ def current_platform() -> str:
     )
 
 
-def validate_recipe(recipe: dict, path: Path) -> None:
+def validate_recipe(recipe: dict, path) -> None:
     required = ("id", "name", "summary", "tasks", "install", "verify", "sources")
     missing = [key for key in required if key not in recipe]
     if missing:
         raise RecipeError(f"{path.name}: missing {', '.join(missing)}")
     if not isinstance(recipe["id"], str) or not ID_PATTERN.fullmatch(recipe["id"]):
         raise RecipeError(f"{path.name}: invalid id")
-    if path.stem != recipe["id"]:
+    if Path(path.name).stem != recipe["id"]:
         raise RecipeError(f"{path.name}: filename must match id")
     if not isinstance(recipe["tasks"], list) or not recipe["tasks"] or not all(
         isinstance(task, str) and ID_PATTERN.fullmatch(task) for task in recipe["tasks"]
@@ -92,7 +93,7 @@ def validate_recipe(recipe: dict, path: Path) -> None:
 def load_recipe(tool_id: str) -> dict:
     if not ID_PATTERN.fullmatch(tool_id):
         raise RecipeError("Invalid tool id")
-    path = CATALOG / f"{tool_id}.json"
+    path = CATALOG.joinpath(f"{tool_id}.json")
     if not path.is_file():
         raise RecipeError(f"Unknown tool: {tool_id}")
     recipe = json.loads(path.read_text(encoding="utf-8"))
@@ -101,7 +102,11 @@ def load_recipe(tool_id: str) -> dict:
 
 
 def all_recipes() -> list[dict]:
-    return [load_recipe(path.stem) for path in sorted(CATALOG.glob("*.json"))]
+    paths = sorted(
+        (path for path in CATALOG.iterdir() if path.name.endswith(".json")),
+        key=lambda path: path.name,
+    )
+    return [load_recipe(Path(path.name).stem) for path in paths]
 
 
 def all_tasks() -> list[str]:

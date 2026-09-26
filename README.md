@@ -23,6 +23,17 @@ git clone https://github.com/tyb-sdu/bioagent-skills.git
 cd bioagent-skills
 ```
 
+如果希望直接使用 `bioagent` / `bioinstall` 命令，可在**独立虚拟环境**中安装本仓库。以下示例以 Windows PowerShell 为例，不会把安装器装进系统 Python：
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\bioinstall.exe validate
+.\.venv\Scripts\bioagent.exe --help
+```
+
+Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令及 18 个配方会进入虚拟环境，不依赖运行时所在目录；Agent Skills 原文件仍在克隆仓库的 `.agents/skills/`，**尚未随 Python 安装包自动注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+
 ```bash
 python scripts/bioinstall.py doctor
 python scripts/bioinstall.py list
@@ -75,6 +86,7 @@ python scripts/bioinstall.py plan boltz2
 python scripts/bioinstall.py validate
 python scripts/validate_skills.py
 python -m unittest discover -s tests -v
+python -m pip wheel --no-deps --wheel-dir dist .
 ```
 
 增加软件时，先读 [配方格式](docs/RECIPE_SCHEMA.md)，核对官方安装来源、操作系统支持、许可和最小验收，再增加 `catalog/<id>.json`。仅当现有流程无法清楚覆盖时新增 Skill。欢迎通过 issue 或 pull request 提交经过验证的安装配方。

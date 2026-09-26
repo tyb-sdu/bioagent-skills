@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bioagent-skills"
+version = "0.3.0"
+description = "Local terminal agent and reviewed installation recipes for computational biology software"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "tyb-sdu"}]
+keywords = ["computational-biology", "agent-skills", "software-installation"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.urls]
+Repository = "https://github.com/tyb-sdu/bioagent-skills"
+Documentation = "https://github.com/tyb-sdu/bioagent-skills#readme"
+
+[project.scripts]
+bioagent = "bioagent_skills.bioagent:main"
+bioinstall = "bioagent_skills.bioinstall:main"
+
+[tool.setuptools]
+packages = ["bioagent_skills", "bioagent_skills.catalog"]
+package-dir = {"bioagent_skills" = "scripts", "bioagent_skills.catalog" = "catalog"}
+include-package-data = false
+
+[tool.setuptools.package-data]
+"bioagent_skills.catalog" = ["*.json"]

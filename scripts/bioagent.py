@@ -14,7 +14,10 @@ import sys
 from urllib.error import HTTPError, URLError
 from urllib.request import ProxyHandler, Request, build_opener
 
-import bioinstall
+if __package__ == "bioagent_skills":
+    from . import bioinstall
+else:
+    import bioinstall
 
 
 OLLAMA_BASE = "http://127.0.0.1:11434/api/"

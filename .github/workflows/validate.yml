@@ -18,3 +18,12 @@ jobs:
         run: python scripts/validate_skills.py
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
+      - name: Build installable terminal commands
+        run: python -m pip wheel --no-deps --wheel-dir dist .
+      - name: Smoke test wheel outside checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/bioagent-smoke"
+          "$RUNNER_TEMP/bioagent-smoke/bin/python" -m pip install --no-index --no-deps dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioinstall" validate
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" --help
