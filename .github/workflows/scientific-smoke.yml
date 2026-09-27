@@ -24,6 +24,7 @@ on:
       - catalog/mdanalysis.json
       - catalog/fpocket.json
       - catalog/smina.json
+      - catalog/dssp.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -49,6 +50,7 @@ on:
       - catalog/mdanalysis.json
       - catalog/fpocket.json
       - catalog/smina.json
+      - catalog/dssp.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -121,6 +123,9 @@ jobs:
           - {tool: smina, os: ubuntu-latest}
           - {tool: smina, os: windows-latest}
           - {tool: smina, os: macos-latest}
+          - {tool: dssp, os: ubuntu-latest}
+          - {tool: dssp, os: windows-latest}
+          - {tool: dssp, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

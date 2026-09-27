@@ -1,0 +1,25 @@
+{
+  "id": "molprobity",
+  "name": "MolProbity",
+  "summary": "All-atom validation of protein, nucleic-acid and complex structures.",
+  "tasks": ["structure-validation", "protein-structure-validation", "nucleic-acid-structure-validation"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer installation guide and check its current prerequisites, especially legacy PHP 5.6 and build dependencies; verify that the host can provide them without replacing the system PHP used by other applications.",
+      "Plan a user-owned local installation. The maintainers restrict deployment to individual machines or restricted-access private networks; do not expose a MolProbity site to the public Internet.",
+      "Review and pin the maintainer's bootstrap script and every source it downloads before running anything. Its setup can fetch and compile multiple components; this catalog does not execute the bootstrap or change system services.",
+      "If a browser interface is needed, follow the maintainer's localhost-only PHP guidance. If only command-line validation is needed, review the relevant installed tools without starting a web service."
+    ],
+    "verify_note": "Use the maintainer's local verification instructions on a small public structure and record the installed component versions and whether only a local command line or localhost service was enabled."
+  },
+  "verify": {"argv": []},
+  "notes": ["MolProbity is guidance-only because the documented local setup is a multi-component source build with legacy PHP and explicit deployment restrictions. The public website is not a substitute for the user's local installation."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/rlabduke/MolProbity/blob/master/README.md"},
+    {"type": "terms", "url": "https://github.com/rlabduke/MolProbity"},
+    {"type": "paper", "url": "https://doi.org/10.1107/S0907444909042073"}
+  ]
+}

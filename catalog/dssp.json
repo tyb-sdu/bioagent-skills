@@ -1,0 +1,25 @@
+{
+  "id": "dssp",
+  "name": "DSSP",
+  "aliases": ["mkdssp"],
+  "summary": "Assign protein secondary structure from supplied atomic coordinates.",
+  "tasks": ["secondary-structure-assignment", "structure-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-dssp",
+    "channel": "conda-forge",
+    "package": "dssp=4.6.1"
+  },
+  "verify": {"argv": ["mkdssp", "--version"]},
+  "notes": ["DSSP 4 assigns secondary structure to an existing 3D model; it does not predict structure from sequence. The conda artifact is comparatively large (roughly 96 MB on Windows and 204 MB on Linux/macOS before dependencies), so review disk and bandwidth availability. Recent DSSP writes annotated mmCIF by default; specify an output format when downstream tools require legacy DSSP text."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/PDB-REDO/dssp/blob/trunk/README.md"},
+    {"type": "usage", "url": "https://github.com/PDB-REDO/dssp/blob/trunk/doc/mkdssp.md"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/dssp"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/dssp/4.6.1"},
+    {"type": "paper", "url": "https://doi.org/10.1002/bip.360221211"}
+  ]
+}

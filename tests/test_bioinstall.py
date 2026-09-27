@@ -74,16 +74,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 50)
+        self.assertGreaterEqual(len(recipes), 52)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 50)
-        self.assertEqual(report["automatic_install_count"], 20)
-        self.assertEqual(report["guidance_only_count"], 30)
-        self.assertEqual(report["task_count"], 63)
+        self.assertEqual(report["software_count"], 52)
+        self.assertEqual(report["automatic_install_count"], 21)
+        self.assertEqual(report["guidance_only_count"], 31)
+        self.assertEqual(report["task_count"], 67)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -97,6 +97,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("p2rank", report["guidance_only_ids"])
         self.assertIn("smina", report["automatic_install_ids"])
         self.assertIn("binana", report["guidance_only_ids"])
+        self.assertIn("dssp", report["automatic_install_ids"])
+        self.assertIn("molprobity", report["guidance_only_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -104,7 +106,20 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 50)
+        self.assertEqual(report["software_count"], 52)
+
+    def test_dssp_and_molprobity_use_distinct_installation_boundaries(self):
+        dssp = bioinstall.load_recipe("dssp")
+        self.assertEqual(dssp["install"]["package"], "dssp=4.6.1")
+        self.assertEqual(dssp["verify"]["argv"], ["mkdssp", "--version"])
+        self.assertEqual(set(dssp["install"]["platforms"]), {"linux", "macos", "windows"})
+        molprobity = bioinstall.load_recipe("molprobity")
+        self.assertFalse(molprobity["install"]["automatic"])
+        self.assertEqual(molprobity["install"]["kind"], "source")
+        with patch.object(bioinstall, "run") as run_command, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(molprobity, apply=True)
+        run_command.assert_not_called()
 
     def test_smina_and_binana_keep_automatic_and_guided_routes_separate(self):
         smina = bioinstall.load_recipe("smina")
