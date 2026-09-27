@@ -12,6 +12,9 @@ on:
       - catalog/meeko.json
       - catalog/mdtraj.json
       - catalog/parmed.json
+      - catalog/gemmi.json
+      - catalog/prolif.json
+      - catalog/openmmforcefields.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -25,6 +28,9 @@ on:
       - catalog/meeko.json
       - catalog/mdtraj.json
       - catalog/parmed.json
+      - catalog/gemmi.json
+      - catalog/prolif.json
+      - catalog/openmmforcefields.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -64,6 +70,15 @@ jobs:
           - {tool: parmed, os: ubuntu-latest}
           - {tool: parmed, os: windows-latest}
           - {tool: parmed, os: macos-latest}
+          - {tool: gemmi, os: ubuntu-latest}
+          - {tool: gemmi, os: windows-latest}
+          - {tool: gemmi, os: macos-latest}
+          - {tool: prolif, os: ubuntu-latest}
+          - {tool: prolif, os: windows-latest}
+          - {tool: prolif, os: macos-latest}
+          - {tool: openmmforcefields, os: ubuntu-latest}
+          - {tool: openmmforcefields, os: windows-latest}
+          - {tool: openmmforcefields, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

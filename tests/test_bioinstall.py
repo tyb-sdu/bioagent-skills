@@ -61,16 +61,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 43)
+        self.assertGreaterEqual(len(recipes), 46)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 43)
-        self.assertEqual(report["automatic_install_count"], 13)
+        self.assertEqual(report["software_count"], 46)
+        self.assertEqual(report["automatic_install_count"], 16)
         self.assertEqual(report["guidance_only_count"], 30)
-        self.assertEqual(report["task_count"], 59)
+        self.assertEqual(report["task_count"], 62)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -85,7 +85,7 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 43)
+        self.assertEqual(report["software_count"], 46)
         run_command.assert_not_called()
 
     def test_task_suggestions_are_read_only_and_include_platform_state(self):
@@ -166,6 +166,9 @@ class CatalogTests(unittest.TestCase):
             "meeko": ("meeko=0.8.0", "python"),
             "mdtraj": ("mdtraj=1.11.1", "python"),
             "parmed": ("parmed=4.3.1", "python"),
+            "gemmi": ("gemmi=0.7.5", "python"),
+            "prolif": ("prolif=2.1.0", "python"),
+            "openmmforcefields": ("openmmforcefields=0.16.0", "python"),
         }
         for tool_id, (package, executable) in expected.items():
             with self.subTest(tool_id=tool_id):

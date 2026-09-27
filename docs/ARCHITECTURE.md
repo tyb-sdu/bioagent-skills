@@ -34,7 +34,7 @@ are valid. The local model's classification may be wrong, so users must inspect
 the displayed plan and sources before confirming an install.
 
 This is a minimal single-turn terminal agent, not a packaged desktop app or a
-general computer-use agent. The two CLI commands, 43 recipes, and 10 Skills are
+general computer-use agent. The two CLI commands, 46 recipes, and 10 Skills are
 installable as a Python wheel. `bioagent skills export --to <path>/skills`
 previews copying Skills to a user-chosen discovery path; `--apply` performs the
 copy and refuses any name collision. Wheel installation does not automatically

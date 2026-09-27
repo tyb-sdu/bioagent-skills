@@ -1,0 +1,23 @@
+{
+  "id": "prolif",
+  "name": "ProLIF",
+  "aliases": ["Protein-Ligand Interaction Fingerprints"],
+  "summary": "Protein-ligand interaction fingerprints from complex structures, docking results and molecular-dynamics trajectories.",
+  "tasks": ["protein-ligand-interactions", "interaction-profiling", "protein-ligand-interaction-fingerprints", "trajectory-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-prolif",
+    "channel": "conda-forge",
+    "package": "prolif=2.1.0"
+  },
+  "verify": {"argv": ["python", "-c", "import prolif; print(prolif.__version__)"]},
+  "notes": ["The pinned noarch package depends on platform-specific RDKit and MDAnalysis builds. Import verification does not validate chemical preparation, interaction definitions or fingerprint results."],
+  "sources": [
+    {"type": "installation", "url": "https://prolif-water.readthedocs.io/en/latest/source/installation.html"},
+    {"type": "package-release", "url": "https://anaconda.org/conda-forge/prolif/files?version=2.1.0"},
+    {"type": "paper", "url": "https://doi.org/10.1186/s13321-021-00548-6"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "openmmforcefields",
+  "name": "OpenMMForceFields",
+  "aliases": ["OpenMM Force Fields"],
+  "summary": "Additional protein, nucleic-acid and small-molecule force fields and template generators for OpenMM.",
+  "tasks": ["molecular-dynamics", "protein-simulation", "force-field-parameterization", "molecule-preparation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-openmmforcefields",
+    "channel": "conda-forge",
+    "package": "openmmforcefields=0.16.0"
+  },
+  "verify": {"argv": ["python", "-c", "from openmmforcefields.generators import SystemGenerator; print(SystemGenerator.__name__)"]},
+  "notes": ["A basic import does not validate a chosen force field, parameterization workflow or molecular simulation. Some optional backends and tools, including OpenEye and Espaloma, require separate installation or licensing and are not included in this route."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/openmm/openmmforcefields/blob/main/README.md"},
+    {"type": "package-release", "url": "https://anaconda.org/conda-forge/openmmforcefields/files?version=0.16.0"},
+    {"type": "documentation", "url": "https://docs.openmm.org/latest/userguide/application/05_add_on_packages.html"}
+  ]
+}

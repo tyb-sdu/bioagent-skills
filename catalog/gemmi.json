@@ -1,0 +1,21 @@
+{
+  "id": "gemmi",
+  "name": "Gemmi",
+  "summary": "Macromolecular structure and crystallography tools for PDB/mmCIF models, MTZ reflections and density maps.",
+  "tasks": ["structure-analysis", "crystallographic-structure-analysis", "cryo-em-structure-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-gemmi",
+    "channel": "conda-forge",
+    "package": "gemmi=0.7.5"
+  },
+  "verify": {"argv": ["python", "-c", "import gemmi; print(gemmi.__version__)"]},
+  "notes": ["The conda package includes the Python module and command-line program. Import verification does not validate a user's structure, map or reflection data."],
+  "sources": [
+    {"type": "installation", "url": "https://gemmi.readthedocs.io/en/stable/install.html"},
+    {"type": "package-release", "url": "https://anaconda.org/conda-forge/gemmi/files?version=0.7.5"}
+  ]
+}
