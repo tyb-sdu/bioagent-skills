@@ -1,0 +1,23 @@
+{
+  "id": "relion",
+  "name": "RELION",
+  "summary": "Cryo-electron-microscopy single-particle processing and reconstruction suite.",
+  "tasks": ["cryo-em-reconstruction", "cryo-em-image-processing", "cryo-em-structure-analysis"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Use the current official RELION installation guide and select its stable release branch rather than an arbitrary repository head.",
+      "Check compiler, CMake, MPI, FFT and optional CUDA/HIP/SYCL support; keep its Python environment distinct from the compiler/MPI build environment as instructed by the maintainer.",
+      "Build in a user-owned location, review detected libraries and GPU settings, and verify the resulting CLI/GUI without processing research images."
+    ],
+    "verify_note": "Check the built RELION executables and official test procedure for the selected build; a reconstruction is a separate scientific validation."
+  },
+  "verify": {"argv": []},
+  "notes": ["RELION is GPLv2 and free for academic and industry use; its optional external programs may carry separate terms."],
+  "sources": [
+    {"type": "installation", "url": "https://relion.readthedocs.io/en/release-5.0/Installation.html"},
+    {"type": "repository", "url": "https://github.com/3dem/relion"}
+  ]
+}

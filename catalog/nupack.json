@@ -1,0 +1,24 @@
+{
+  "id": "nupack",
+  "name": "NUPACK 4",
+  "aliases": ["NUPACK"],
+  "summary": "Nucleic-acid thermodynamics, structure analysis and sequence design.",
+  "tasks": ["nucleic-acid-thermodynamics", "nucleic-acid-structure-prediction", "nucleic-acid-sequence-design"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the official NUPACK 4 license and select the permitted use case; download the package through the user's own authorized account.",
+      "Check the official supported Python versions and architecture, then install the user-obtained package into a new isolated environment on Linux/macOS. Windows users need WSL2 for this documented route.",
+      "Run the official package-version and pytest checks without submitting sequences to any web service."
+    ],
+    "verify_note": "Use the official pip show nupack and pytest --pyargs nupack checks after the user supplies the licensed package."
+  },
+  "verify": {"argv": []},
+  "notes": ["NUPACK's downloadable Python package is not assumed to be an unrestricted public PyPI package; license acceptance is a user action."],
+  "sources": [
+    {"type": "installation", "url": "https://docs.nupack.org/start/"},
+    {"type": "terms", "url": "https://dna28.nupack.org/download/overview"}
+  ]
+}

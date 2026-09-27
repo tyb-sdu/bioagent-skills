@@ -1,0 +1,24 @@
+{
+  "id": "rosettafold3",
+  "name": "RoseTTAFold3 (RF3)",
+  "aliases": ["RF3", "RoseTTAFold 3"],
+  "summary": "Foundry all-atom biomolecular structure-prediction model.",
+  "tasks": ["protein-structure-prediction", "protein-complex-modeling", "protein-ligand-modeling", "protein-nucleic-acid-modeling"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the current Rosetta Commons Foundry RF3 installation and license documentation; select RF3 rather than the older RoseTTAFold pipeline.",
+      "Check the host GPU/PyTorch/CUDA compatibility and set up a fresh environment before installing the documented rc-foundry[rf3] extra.",
+      "Review checkpoint provenance, size and storage path before downloading model weights with the official Foundry tooling."
+    ],
+    "verify_note": "Check the Foundry/RF3 command-line help and resolved checkpoint path; a prediction is a separate compute-heavy validation."
+  },
+  "verify": {"argv": []},
+  "notes": ["The Foundry RF3 extra has Linux-specific dependencies; macOS MPS support documented through a community fork is not treated as a reviewed native route here."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/RosettaCommons/foundry/blob/production/models/rf3/README.md"},
+    {"type": "terms", "url": "https://rosettacommons.org/software/download/"}
+  ]
+}

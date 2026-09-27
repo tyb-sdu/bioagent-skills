@@ -61,15 +61,15 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 31)
+        self.assertGreaterEqual(len(recipes), 41)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 31)
+        self.assertEqual(report["software_count"], 41)
         self.assertEqual(report["automatic_install_count"], 9)
-        self.assertEqual(report["guidance_only_count"], 22)
+        self.assertEqual(report["guidance_only_count"], 32)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -82,7 +82,7 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 31)
+        self.assertEqual(report["software_count"], 41)
         run_command.assert_not_called()
 
     def test_task_suggestions_are_read_only_and_include_platform_state(self):

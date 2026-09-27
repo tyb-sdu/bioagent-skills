@@ -1,0 +1,23 @@
+{
+  "id": "cryosparc",
+  "name": "CryoSPARC",
+  "summary": "Cryo-EM image processing and reconstruction platform with a local service architecture.",
+  "tasks": ["cryo-em-reconstruction", "cryo-em-image-processing", "cryo-em-structure-analysis"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the current CryoSPARC system requirements and license terms; non-profit academic users must obtain their own license ID before downloading.",
+      "Decide whether a single workstation or managed cluster installation is appropriate, and confirm ports, storage, GPU drivers and administrative responsibilities.",
+      "Follow the vendor's download and install guide using the user's licensed account. Do not collect, transmit, or store the license ID in this repository or an agent conversation."
+    ],
+    "verify_note": "Use the official installation-status and UI access checks after the licensed installation is complete; do not process data during the installer smoke test."
+  },
+  "verify": {"argv": []},
+  "notes": ["Free-of-charge academic licensing does not make CryoSPARC unrestricted or zero-cost to operate. Its main process may require network access for license verification."],
+  "sources": [
+    {"type": "installation", "url": "https://guide.cryosparc.com/setup-configuration-and-management/how-to-download-install-and-configure"},
+    {"type": "terms", "url": "https://guide.cryosparc.com/licensing/non-commercial-license-agreement"}
+  ]
+}

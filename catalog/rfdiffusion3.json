@@ -1,0 +1,24 @@
+{
+  "id": "rfdiffusion3",
+  "name": "RFdiffusion3 (RFD3)",
+  "aliases": ["RFD3", "RFdiffusion 3"],
+  "summary": "Foundry atom-level generative design of protein structures and binders.",
+  "tasks": ["protein-backbone-design", "protein-interface-design", "binder-design", "protein-ligand-design"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the current official RFdiffusion3 installation tutorial and separate it from legacy RFdiffusion and RFdiffusion2.",
+      "Create a fresh environment with compatible Python/PyTorch/GPU support and follow the documented rc-foundry[rfd3] package route.",
+      "Confirm the user's preferred checkpoint directory and download size before using foundry install rfd3; never silently download weights into a shared home directory."
+    ],
+    "verify_note": "Check the Foundry/RFD3 CLI and checkpoint path. The official design demo performs compute and is a separately approved test."
+  },
+  "verify": {"argv": []},
+  "notes": ["The official tutorial describes an approximately 3 GB model checkpoint. GPU architecture and PyTorch compatibility need per-host review."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/RosettaCommons/foundry/blob/production/models/rfd3/docs/tutorials/RFdiffusion3_installation_tutorial.md"},
+    {"type": "terms", "url": "https://rosettacommons.org/software/download/"}
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "modelangelo",
+  "name": "ModelAngelo",
+  "summary": "AI-assisted atomic model building from cryo-EM density maps.",
+  "tasks": ["cryo-em-model-building", "cryo-em-structure-analysis", "protein-nucleic-acid-modeling"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer's ModelAngelo installation instructions and check the user's GPU memory and disk capacity before any download.",
+      "Review the repository install script and its conda environment changes before running it. Choose a user-controlled cache for the approximately 10 GB of required model/language-model weights.",
+      "Run model_angelo build -h in the created environment without downloading research inputs or processing a cryo-EM map."
+    ],
+    "verify_note": "Run the maintainer-documented model_angelo build -h check; model-building examples require separate approval and compute."
+  },
+  "verify": {"argv": []},
+  "notes": ["The installation script and model weights are not vendored or executed by this catalog. GPU compatibility and checkpoint storage require per-host review."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/3dem/model-angelo/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41586-024-07215-4"}
+  ]
+}

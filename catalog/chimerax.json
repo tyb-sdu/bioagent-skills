@@ -1,0 +1,25 @@
+{
+  "id": "chimerax",
+  "name": "UCSF ChimeraX",
+  "aliases": ["ChimeraX"],
+  "summary": "Interactive molecular and cryo-EM density visualization and analysis.",
+  "tasks": ["molecular-visualization", "structure-visualization", "cryo-em-structure-analysis"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the official ChimeraX non-commercial or commercial license, and have the user accept the applicable terms before downloading.",
+      "Select the official installer for the host operating system and graphics hardware; review the current system requirements and installer provenance.",
+      "Install to a user-approved location and confirm GUI startup. Do not treat a headless CLI check as proof that graphics and map rendering work."
+    ],
+    "verify_note": "Launch ChimeraX and inspect its version and basic rendering with a user-approved example; do not fetch structures automatically."
+  },
+  "verify": {"argv": []},
+  "notes": ["ChimeraX is free of charge for permitted non-commercial use, while commercial use needs a separate written license."],
+  "sources": [
+    {"type": "installation", "url": "https://www.cgl.ucsf.edu/chimerax/download.html"},
+    {"type": "terms", "url": "https://www.cgl.ucsf.edu/chimerax/docs/licensing.html"},
+    {"type": "requirements", "url": "https://www.cgl.ucsf.edu/chimerax/system_requirements.html"}
+  ]
+}

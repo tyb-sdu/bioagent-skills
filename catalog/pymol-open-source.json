@@ -1,0 +1,25 @@
+{
+  "id": "pymol-open-source",
+  "name": "PyMOL Open Source",
+  "aliases": ["open-source PyMOL", "PyMOL OSS"],
+  "summary": "Open-source PyMOL molecular graphics application, distinct from licensed PyMOL bundles.",
+  "tasks": ["molecular-visualization", "structure-visualization", "protein-interface-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Distinguish the conda-forge pymol-open-source package from Schrödinger's separately licensed pymol-bundle distribution.",
+      "Check the current conda-forge build for the user's OS/architecture and create a fresh environment without changing global channels.",
+      "Review graphical desktop/OpenGL requirements and launch the GUI before treating the installation as usable. Avoid headless rendering assumptions."
+    ],
+    "verify_note": "Launch the installed open-source PyMOL build and check basic molecule rendering on the user's desktop."
+  },
+  "verify": {"argv": []},
+  "notes": ["The current automatic installer has no graphical smoke-test contract, so this conda route remains guidance-only."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/conda-forge/pymol-open-source-feedstock/blob/main/README.md"},
+    {"type": "repository", "url": "https://github.com/schrodinger/pymol-open-source"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/pymol-open-source"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "oxdna",
+  "name": "oxDNA",
+  "aliases": ["oxRNA"],
+  "summary": "Coarse-grained simulation of DNA and RNA systems.",
+  "tasks": ["nucleic-acid-simulation", "coarse-grained-molecular-dynamics", "dna-nanotechnology"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer's oxDNA source-build guide and decide whether CPU-only, CUDA, MPI, or Python bindings are needed.",
+      "Check CMake, compiler and optional CUDA compatibility. Build in a separate user-owned directory and do not run make install against the system Python.",
+      "Confirm that the oxDNA, DNAnalysis and confGenerator executables appear in the documented build/bin location before running any simulation."
+    ],
+    "verify_note": "Inspect the built executables and run a maintainer-supplied minimal example separately after the user approves compute use."
+  },
+  "verify": {"argv": []},
+  "notes": ["The optional oxpy/analysis-tools route has its own Python-version requirements; GPU and MPI builds need separate validation."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/lorenzo-rovigatti/oxDNA/blob/master/docs/source/install.md"},
+    {"type": "repository", "url": "https://github.com/lorenzo-rovigatti/oxDNA"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "autodock-gpu",
+  "name": "AutoDock-GPU",
+  "summary": "Accelerated AutoDock4-style protein-ligand docking on supported CPU/GPU backends.",
+  "tasks": ["protein-ligand-docking", "virtual-screening"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the official AutoDock-GPU build guide and choose the supported OpenCL or CUDA backend for the user's hardware.",
+      "Check compiler, accelerator SDK, include/library paths and intended work-group size before building in a user-owned directory.",
+      "Verify the generated backend-specific executable and its help output; receptor maps and ligand PDBQT preparation are separate workflows."
+    ],
+    "verify_note": "Check the compiled autodock_<type>_<N>wi executable and maintainer example only after GPU and input-preparation review."
+  },
+  "verify": {"argv": []},
+  "notes": ["This is distinct from AutoDock Vina. Building and running a GPU backend requires host-specific drivers/toolkits and cannot be safely generalized as a one-command install."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/ccsb-scripps/autodock-gpu#compilation"}
+  ]
+}

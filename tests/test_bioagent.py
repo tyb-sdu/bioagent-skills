@@ -43,6 +43,14 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertTrue(recipe["install"]["automatic"])
         classify.assert_not_called()
 
+    def test_foundry_names_do_not_confuse_older_models_or_rosetta(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            self.assertEqual(bioagent.route_request("安装 RFdiffusion3", None)["tool_id"], "rfdiffusion3")
+            self.assertEqual(bioagent.route_request("安装 RFdiffusion", None)["tool_id"], "rfdiffusion")
+            self.assertEqual(bioagent.route_request("安装 RoseTTAFold3", None)["tool_id"], "rosettafold3")
+            self.assertEqual(bioagent.route_request("安装 Rosetta", None)["tool_id"], "rosetta")
+        classify.assert_not_called()
+
     def test_named_tool_takes_precedence_even_if_model_is_configured(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("安装 OpenMM", model="local:1")
