@@ -8,6 +8,10 @@ on:
       - catalog/autodock-vina.json
       - catalog/freesasa.json
       - catalog/propka.json
+      - catalog/openbabel.json
+      - catalog/meeko.json
+      - catalog/mdtraj.json
+      - catalog/parmed.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -17,6 +21,10 @@ on:
       - catalog/autodock-vina.json
       - catalog/freesasa.json
       - catalog/propka.json
+      - catalog/openbabel.json
+      - catalog/meeko.json
+      - catalog/mdtraj.json
+      - catalog/parmed.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -44,6 +52,18 @@ jobs:
           - {tool: propka, os: ubuntu-latest}
           - {tool: propka, os: windows-latest}
           - {tool: propka, os: macos-latest}
+          - {tool: openbabel, os: ubuntu-latest}
+          - {tool: openbabel, os: windows-latest}
+          - {tool: openbabel, os: macos-latest}
+          - {tool: meeko, os: ubuntu-latest}
+          - {tool: meeko, os: windows-latest}
+          - {tool: meeko, os: macos-latest}
+          - {tool: mdtraj, os: ubuntu-latest}
+          - {tool: mdtraj, os: windows-latest}
+          - {tool: mdtraj, os: macos-latest}
+          - {tool: parmed, os: ubuntu-latest}
+          - {tool: parmed, os: windows-latest}
+          - {tool: parmed, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

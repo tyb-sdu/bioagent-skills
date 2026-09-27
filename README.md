@@ -8,7 +8,7 @@
 
 | 流程 | 状态 | 首批软件 |
 | --- | --- | --- |
-| conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina、FreeSASA（后两者限 Linux/macOS） |
+| conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina、FreeSASA、Open Babel、Meeko、MDTraj、ParmEd（Vina 与 FreeSASA 限 Linux/macOS） |
 | PyPI 包安装到独立虚拟环境 | 可预览、可执行、可验收 | MDAnalysis、PROPKA |
 | 官方二进制、容器、源码、权重、受限软件及尚未锁定版本的包 | 资料核对与安装引导 | AlphaFold、RoseTTAFold3、RFdiffusion3、NUPACK、oxDNA、RELION、CryoSPARC、ModelAngelo、ChimeraX 等；完整清单见[覆盖矩阵](docs/COVERAGE.md) |
 
@@ -32,7 +32,7 @@ python -m venv .venv
 .\.venv\Scripts\bioagent.exe --help
 ```
 
-Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、41 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、43 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
 
 要把 Skill 放进另一个支持 Agent Skills 的项目，先查明该智能体的 Skill 发现目录，再显式导出。例如在 Windows PowerShell 中：
 
@@ -58,7 +58,7 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、41 款软件配方、56 类任务标签**，其中 9 款具有自动安装路径，32 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、43 款软件配方、59 类任务标签**，其中 13 款具有自动安装路径，30 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。
 
 `plan` 和 `suggest` 的 `supported_here` 对自动配方检查当前操作系统、处理器架构和已知 Python 版本；引导型配方仅检查已列出的操作系统。`ready_here` 还要求本机已有安装前提（例如 conda），具体障碍见 `blocking_reasons`。不支持的自动安装目标不会展示可执行命令；某些配方会显示只提供步骤的 `manual_fallback`。这些状态不是依赖求解或安装成功的保证。`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
 
@@ -120,7 +120,7 @@ python scripts/bioinstall.py plan boltz2
 - 每个软件放在独立环境。conda 配方使用 `conda-forge` 并只对该命令指定渠道；不改用户全局配置。参见 [conda 渠道文档](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-channels.html)。
 - 软件与预训练权重分开管理。例如 [Boltz](https://github.com/jwohlwend/boltz/blob/main/README.md)可能在首次预测时下载模型文件；[AlphaFold 3](https://github.com/google-deepmind/alphafold3/blob/main/WEIGHTS_TERMS_OF_USE.md)的参数有单独使用条款。ProteinMPNN、LigandMPNN、RFdiffusion 和 DiffDock 的推理也需核对模型文件。
 - 自动安装配方固定了当前核对的顶层软件版本。收据记录实际顶层版本、命令与来源；完整依赖锁定和跨平台安装验证属于下一阶段。不要把本仓库视为对全部平台已经完成实测的声明。
-- PDBFixer、Vina、FreeSASA 和 PROPKA 的实际安装冒烟测试配置在 GitHub 临时环境中，验证范围和未覆盖的平台见[安装测试边界](docs/INSTALL_TESTING.md)。单元测试通过不等于软件安装成功。
+- PDBFixer、Vina、FreeSASA、PROPKA、Open Babel、Meeko、MDTraj 和 ParmEd 的实际安装冒烟测试配置在 GitHub 临时环境中，验证范围和未覆盖的平台见[安装测试边界](docs/INSTALL_TESTING.md)。单元测试通过不等于软件安装成功。
 
 ## 开发与校验
 

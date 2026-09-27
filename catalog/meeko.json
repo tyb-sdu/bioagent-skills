@@ -6,18 +6,17 @@
   "install": {
     "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
-    "automatic": false,
-    "steps": [
-      "Read the maintainer's installation and CLI documentation; choose a new isolated conda environment for Meeko and its chemistry dependencies.",
-      "Review the current conda-forge package and dependency solver output before installation; do not substitute an unreviewed package version or add global channels.",
-      "Check mk_prepare_ligand.py and mk_prepare_receptor.py help in the isolated environment. Choose protonation, atom types and receptor flexibility for each scientific case separately."
-    ],
-    "verify_note": "Run the maintainer-documented preparation CLI help commands without processing research structures."
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-meeko",
+    "channel": "conda-forge",
+    "package": "meeko=0.8.0"
   },
-  "verify": {"argv": []},
-  "notes": ["Meeko prepares docking inputs and processes outputs; it is not the docking engine itself. The maintainer also documents a PyPI route."],
+  "verify": {"argv": ["python", "-c", "import meeko; print(meeko.__file__)"]},
+  "notes": ["Meeko prepares docking inputs and processes outputs; it is not the docking engine itself. The noarch package still depends on platform-specific RDKit and other libraries. Verify the mk_prepare_ligand.py CLI separately for a specific workflow; protonation and receptor flexibility remain scientific choices."],
   "sources": [
-    {"type": "installation", "url": "https://github.com/forlilab/Meeko#installation"},
-    {"type": "package", "url": "https://anaconda.org/conda-forge/meeko"}
+    {"type": "installation", "url": "https://meeko.readthedocs.io/en/develop/installation.html"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/meeko"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/meeko/0.8.0"}
   ]
 }

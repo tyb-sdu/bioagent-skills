@@ -7,7 +7,8 @@ has been installed successfully.
 The [scientific smoke workflow](../.github/workflows/scientific-smoke.yml) tests
 PDBFixer on disposable Linux, Windows, and macOS runners, AutoDock Vina and
 FreeSASA on Linux and macOS runners, and PROPKA on Linux, macOS and Windows
-runners. It creates the recipe's fresh conda or Python environment,
+runners. Open Babel, Meeko, MDTraj and ParmEd are also configured for disposable
+Linux, Windows and macOS runners. It creates the recipe's fresh conda or Python environment,
 executes its minimal verification, repeats the verification, checks that the
 status/usage handoff recognizes the installed environment and matching receipt,
 and retains the

@@ -1,0 +1,22 @@
+{
+  "id": "parmed",
+  "name": "ParmEd",
+  "summary": "Cross-program molecular-mechanics topology and parameter editing.",
+  "tasks": ["structure-preparation", "simulation-topology-editing", "force-field-parameter-conversion"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-parmed",
+    "channel": "conda-forge",
+    "package": "parmed=4.3.1"
+  },
+  "verify": {"argv": ["python", "-c", "import parmed; print(parmed.__version__)"]},
+  "notes": ["ParmEd can convert Amber, CHARMM and GROMACS-related topology/parameter files. Import verification does not guarantee force-field semantics are preserved in a conversion."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/ParmEd/ParmEd/blob/master/README.md"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/parmed"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/parmed/4.3.1"}
+  ]
+}

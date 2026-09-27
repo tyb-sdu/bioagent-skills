@@ -5,19 +5,19 @@
   "summary": "Chemical file-format conversion and molecular preparation toolkit.",
   "tasks": ["molecule-preparation", "ligand-preparation", "chemical-format-conversion"],
   "install": {
-    "kind": "binary",
+    "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
-    "automatic": false,
-    "steps": [
-      "Read the official installation guide and choose the current maintained binary or package-manager route for the user's operating system.",
-      "Review the release provenance and installation target before applying a Windows installer, Linux distribution package or macOS package; avoid changing system PATH without explicit approval.",
-      "Check the obabel CLI in the selected environment and separately validate any required file-format plugins and Python bindings."
-    ],
-    "verify_note": "Run obabel -V or the maintainer's documented help command, then test a tiny format conversion separately."
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-openbabel",
+    "channel": "conda-forge",
+    "package": "openbabel=3.2.1"
   },
-  "verify": {"argv": []},
-  "notes": ["The official binary instructions vary by platform. Python bindings and plugins are not guaranteed by the CLI installation."],
+  "verify": {"argv": ["obabel", "-V"]},
+  "notes": ["The reviewed conda-forge route checks the CLI, not every conversion plugin or Python binding. Different formats and stereochemistry still require scientific validation."],
   "sources": [
-    {"type": "installation", "url": "https://openbabel.org/docs/Installation/install.html"}
+    {"type": "installation", "url": "https://openbabel.org/docs/Installation/install.html"},
+    {"type": "package", "url": "https://github.com/conda-forge/openbabel-feedstock/blob/main/README.md"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/openbabel/3.2.1"}
   ]
 }

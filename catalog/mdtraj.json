@@ -1,0 +1,21 @@
+{
+  "id": "mdtraj",
+  "name": "MDTraj",
+  "summary": "Molecular-dynamics trajectory reading, geometric analysis and observables.",
+  "tasks": ["trajectory-analysis", "structure-analysis", "molecular-dynamics-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-mdtraj",
+    "channel": "conda-forge",
+    "package": "mdtraj=1.11.1"
+  },
+  "verify": {"argv": ["python", "-c", "import mdtraj; print(mdtraj.__version__)"]},
+  "notes": ["The maintainer recommends conda. Import verification does not validate trajectory formats, atom selections or scientific observables."],
+  "sources": [
+    {"type": "installation", "url": "https://mdtraj.readthedocs.io/en/stable/installation.html"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/mdtraj/1.11.1"}
+  ]
+}
