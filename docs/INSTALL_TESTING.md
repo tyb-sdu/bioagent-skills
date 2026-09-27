@@ -7,8 +7,8 @@ has been installed successfully.
 The [scientific smoke workflow](../.github/workflows/scientific-smoke.yml) tests
 PDBFixer on disposable Linux, Windows, and macOS runners, AutoDock Vina and
 FreeSASA on Linux and macOS runners, and PROPKA on Linux, macOS and Windows
-runners. Open Babel, Meeko, MDTraj, ParmEd, Gemmi, ProLIF and OpenMMForceFields are also configured for disposable
-Linux, Windows and macOS runners. It creates the recipe's fresh conda or Python environment,
+runners. Open Babel, Meeko, MDTraj, ParmEd, Gemmi and ProLIF are also configured for disposable
+Linux, Windows and macOS runners; OpenMMForceFields is configured for Linux and macOS only. It creates the recipe's fresh conda or Python environment,
 executes its minimal verification, repeats the verification, checks that the
 status/usage handoff recognizes the installed environment and matching receipt,
 and retains the
@@ -23,6 +23,13 @@ native `Scripts/conda.exe`. The installer now resolves that executable from the
 same installation, uses it consistently for planning, probing and execution,
 and rejects orphan batch launchers. It does not enable `shell=True` to work
 around the bug. Regression tests exercise a prefix containing spaces.
+
+The first OpenMMForceFields Windows conda installation job failed while its
+Linux and macOS jobs passed. The public job summary identifies the failed
+installation step but does not establish a root cause. The Windows-native
+automatic route is therefore disabled; `plan` provides a non-executing WSL
+fallback instead. This is a platform verification boundary, not proof that
+every native Windows installation is impossible.
 
 The handoff integration assertion in `tests/check_installed_handoff.py` reads
 metadata and displays the installed invocation prefix; it does not execute the

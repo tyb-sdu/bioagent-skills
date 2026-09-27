@@ -8,7 +8,7 @@
 
 | 流程 | 状态 | 首批软件 |
 | --- | --- | --- |
-| conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina、FreeSASA、Open Babel、Meeko、MDTraj、ParmEd、Gemmi、ProLIF、OpenMMForceFields（Vina 与 FreeSASA 限 Linux/macOS） |
+| conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina、FreeSASA、Open Babel、Meeko、MDTraj、ParmEd、Gemmi、ProLIF、OpenMMForceFields（Vina、FreeSASA、OpenMMForceFields 限 Linux/macOS） |
 | PyPI 包安装到独立虚拟环境 | 可预览、可执行、可验收 | MDAnalysis、PROPKA |
 | 官方二进制、容器、源码、权重、受限软件及尚未锁定版本的包 | 资料核对与安装引导 | AlphaFold、RoseTTAFold3、RFdiffusion3、NUPACK、oxDNA、RELION、CryoSPARC、ModelAngelo、ChimeraX 等；完整清单见[覆盖矩阵](docs/COVERAGE.md) |
 

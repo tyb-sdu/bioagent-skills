@@ -6,18 +6,28 @@
   "tasks": ["molecular-dynamics", "protein-simulation", "force-field-parameterization", "molecule-preparation"],
   "install": {
     "kind": "conda",
-    "platforms": ["linux", "macos", "windows"],
-    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "platforms": ["linux", "macos"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"]},
     "automatic": true,
     "environment": "bio-openmmforcefields",
     "channel": "conda-forge",
-    "package": "openmmforcefields=0.16.0"
+    "package": "openmmforcefields=0.16.0",
+    "manual_fallback": {
+      "platforms": ["windows"],
+      "steps": [
+        "The pinned native Windows conda route failed its disposable-runner installation check, so this catalog does not execute it on Windows.",
+        "For a Linux route on a Windows computer, install WSL using Microsoft's official instructions, then install a Linux conda distribution inside WSL and run bioinstall from that Linux environment.",
+        "If native Windows is required, consult current OpenMMForceFields and conda-forge package documentation and independently validate the dependency solve before treating the installation as usable."
+      ],
+      "verify_note": "Within WSL/Linux, run bioinstall verify openmmforcefields; on a manually prepared native Windows environment, import openmmforcefields.generators and record the full dependency versions."
+    }
   },
   "verify": {"argv": ["python", "-c", "from openmmforcefields.generators import SystemGenerator; print(SystemGenerator.__name__)"]},
-  "notes": ["A basic import does not validate a chosen force field, parameterization workflow or molecular simulation. Some optional backends and tools, including OpenEye and Espaloma, require separate installation or licensing and are not included in this route."],
+  "notes": ["The Linux and macOS disposable-runner checks passed; the Windows installation check failed, so native Windows automatic execution is disabled without assuming the exact failure cause.", "A basic import does not validate a chosen force field, parameterization workflow or molecular simulation. Some optional backends and tools, including OpenEye and Espaloma, require separate installation or licensing and are not included in this route."],
   "sources": [
     {"type": "installation", "url": "https://github.com/openmm/openmmforcefields/blob/main/README.md"},
     {"type": "package-release", "url": "https://anaconda.org/conda-forge/openmmforcefields/files?version=0.16.0"},
-    {"type": "documentation", "url": "https://docs.openmm.org/latest/userguide/application/05_add_on_packages.html"}
+    {"type": "documentation", "url": "https://docs.openmm.org/latest/userguide/application/05_add_on_packages.html"},
+    {"type": "windows-fallback", "url": "https://learn.microsoft.com/en-us/windows/wsl/install"}
   ]
 }

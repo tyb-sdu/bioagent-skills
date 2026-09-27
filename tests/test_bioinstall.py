@@ -176,7 +176,25 @@ class CatalogTests(unittest.TestCase):
                 self.assertTrue(recipe["install"]["automatic"])
                 self.assertEqual(recipe["install"]["package"], package)
                 self.assertEqual(recipe["verify"]["argv"][0], executable)
-                self.assertEqual(recipe["install"]["architectures"]["windows"], ["x86_64"])
+                if tool_id == "openmmforcefields":
+                    self.assertNotIn("windows", recipe["install"]["platforms"])
+                else:
+                    self.assertEqual(recipe["install"]["architectures"]["windows"], ["x86_64"])
+
+    def test_openmmforcefields_windows_is_guidance_only_after_failed_runner_install(self):
+        recipe = bioinstall.load_recipe("openmmforcefields")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall.shutil, "which", return_value="conda"), patch.object(
+            bioinstall, "run"
+        ) as run_command, contextlib.redirect_stdout(io.StringIO()):
+            plan = bioinstall.build_plan(recipe)
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(recipe, apply=True)
+        self.assertFalse(plan["supported_here"])
+        self.assertTrue(plan["manual_fallback_here"])
+        self.assertNotIn("commands", plan)
+        run_command.assert_not_called()
 
     def test_vina_windows_shows_manual_fallback_but_cannot_auto_apply(self):
         recipe = bioinstall.load_recipe("autodock-vina")

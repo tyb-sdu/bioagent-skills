@@ -77,7 +77,6 @@ jobs:
           - {tool: prolif, os: windows-latest}
           - {tool: prolif, os: macos-latest}
           - {tool: openmmforcefields, os: ubuntu-latest}
-          - {tool: openmmforcefields, os: windows-latest}
           - {tool: openmmforcefields, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
