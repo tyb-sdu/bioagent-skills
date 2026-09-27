@@ -1,0 +1,24 @@
+{
+  "id": "smina",
+  "name": "smina",
+  "summary": "AutoDock Vina-derived protein-ligand docking engine with configurable scoring and minimization.",
+  "tasks": ["protein-ligand-docking", "docking-rescoring", "virtual-screening"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-smina",
+    "channel": "conda-forge",
+    "package": "smina=2020.12.10"
+  },
+  "verify": {"argv": ["smina", "--help"]},
+  "notes": ["This is a historical pinned release; check compatibility before research use. Installing the executable does not prepare receptor or ligand files, validate custom scoring parameters, or run docking. smina is related to but distinct from AutoDock Vina."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/conda-forge/smina-feedstock/blob/main/README.md"},
+    {"type": "maintainer", "url": "https://sourceforge.net/projects/smina/"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/smina"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/smina/2020.12.10"},
+    {"type": "paper", "url": "https://doi.org/10.1021/ci300604z"}
+  ]
+}

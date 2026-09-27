@@ -1,0 +1,27 @@
+{
+  "id": "binana",
+  "name": "BINANA",
+  "summary": "Geometric characterization of protein-small molecule contacts from prepared receptor and ligand poses.",
+  "tasks": ["protein-ligand-interactions", "interaction-profiling"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Select the maintainer's BINANA v2.1 release and its Python-library asset binanapy.zip; do not confuse it with the web-app or JavaScript assets.",
+      "Download the release into a user-owned directory, record its source URL and SHA-256, and inspect archive paths before extracting. GitHub release metadata does not currently publish an asset digest, so no fixed digest is asserted here.",
+      "Use the maintainer's python/COMMAND_LINE_USE.md instructions to run the included run_binana.py in a suitable Python environment; keep receptor and ligand PDBQT/PDB inputs separate and prepared.",
+      "If Python dependencies or command locations differ from the pinned release instructions, stop and review them rather than installing guessed packages globally."
+    ],
+    "verify_note": "Run the included command-line script's documented basic usage on a small public receptor-ligand example and record the Python interpreter, script path, release tag and observed archive digest."
+  },
+  "verify": {"argv": []},
+  "notes": ["BINANA v2.1 is offered as an official release archive, not a reviewed PyPI/conda package in this catalog. Contact classification depends on prepared structures and geometric definitions; installation alone does not validate interaction calls."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/durrantlab/binana/blob/v2.1/README.md"},
+    {"type": "command-line", "url": "https://github.com/durrantlab/binana/blob/v2.1/python/COMMAND_LINE_USE.md"},
+    {"type": "release", "url": "https://github.com/durrantlab/binana/releases/tag/v2.1"},
+    {"type": "release-metadata", "url": "https://api.github.com/repos/durrantlab/binana/releases/tags/v2.1"},
+    {"type": "paper", "url": "https://doi.org/10.1021/acs.jcim.1c01461"}
+  ]
+}

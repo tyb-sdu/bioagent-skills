@@ -311,9 +311,6 @@ def resolve_intent(intent: dict, query: str) -> dict:
     if not task_id:
         raise AgentError("No reviewed tool or task matched the request")
     candidates = bioinstall.suggest_recipes(task_id)["candidates"]
-    supported = [item for item in candidates if item["supported_here"]]
-    if len(supported) == 1:
-        return bioinstall.load_recipe(supported[0]["id"])
     if len(candidates) != 1:
         ids = ", ".join(item["id"] for item in candidates)
         raise AgentError(f"Multiple reviewed tools match {task_id}: {ids}. Specify a tool or more detail")

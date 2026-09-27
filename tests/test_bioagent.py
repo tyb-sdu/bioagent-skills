@@ -49,6 +49,12 @@ class TerminalAgentTests(unittest.TestCase):
             self.assertEqual(bioagent.route_request("请安装 P2Rank", None)["tool_id"], "p2rank")
         classify.assert_not_called()
 
+    def test_new_docking_and_interaction_tools_route_by_explicit_name(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            self.assertEqual(bioagent.route_request("安装 smina", None)["tool_id"], "smina")
+            self.assertEqual(bioagent.route_request("安装 BINANA", None)["tool_id"], "binana")
+        classify.assert_not_called()
+
     def test_binding_pocket_task_is_recognized_without_guessing_a_tool(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("我需要蛋白结合口袋检测软件", None)
@@ -56,6 +62,11 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertEqual(intent["tool_id"], "")
         classify.assert_not_called()
         with patch.object(bioagent.bioinstall, "current_platform", return_value="linux"), patch.object(
+            bioagent.bioinstall, "current_architecture", return_value="x86_64"
+        ):
+            with self.assertRaisesRegex(bioagent.AgentError, "Multiple reviewed tools"):
+                bioagent.resolve_intent(intent, "我需要蛋白结合口袋检测软件")
+        with patch.object(bioagent.bioinstall, "current_platform", return_value="windows"), patch.object(
             bioagent.bioinstall, "current_architecture", return_value="x86_64"
         ):
             with self.assertRaisesRegex(bioagent.AgentError, "Multiple reviewed tools"):

@@ -8,7 +8,7 @@ The [scientific smoke workflow](../.github/workflows/scientific-smoke.yml) tests
 PDBFixer on disposable Linux, Windows, and macOS runners, AutoDock Vina and
 FreeSASA on Linux and macOS runners, and PROPKA on Linux, macOS and Windows
 runners. Open Babel, Meeko, MDTraj, ParmEd, Gemmi and ProLIF are also configured for disposable
-Linux, Windows and macOS runners; PDB2PQR and APBS also have Linux, Windows and macOS jobs. OpenMMForceFields, GROMACS and fpocket are configured for Linux and macOS only. OpenMM, RDKit, Psi4 and MDAnalysis have jobs on all three operating systems. Thus every declared operating-system route of every automatic recipe has a configured smoke job, but a configured job is not evidence of success. The workflow creates the recipe's fresh conda or Python environment,
+Linux, Windows and macOS runners; PDB2PQR, APBS and smina also have Linux, Windows and macOS jobs. OpenMMForceFields, GROMACS and fpocket are configured for Linux and macOS only. OpenMM, RDKit, Psi4 and MDAnalysis have jobs on all three operating systems. Thus every declared operating-system route of every automatic recipe has a configured smoke job, but a configured job is not evidence of success. The workflow creates the recipe's fresh conda or Python environment,
 executes its minimal verification, repeats the verification, checks that the
 status/usage handoff recognizes the installed environment and matching receipt,
 and retains the
@@ -27,6 +27,8 @@ completed successfully on commit `e4cf709`. This includes the new fpocket
 Linux and macOS jobs; all 19 automatic recipes passed on every declared
 operating-system route. P2Rank remains guidance-only and has no automatic
 installation job.
+The later smina jobs are separate from the historical 52-job run; BINANA is
+guidance-only and has no automatic installation job.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the

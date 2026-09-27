@@ -74,15 +74,15 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 48)
+        self.assertGreaterEqual(len(recipes), 50)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 48)
-        self.assertEqual(report["automatic_install_count"], 19)
-        self.assertEqual(report["guidance_only_count"], 29)
+        self.assertEqual(report["software_count"], 50)
+        self.assertEqual(report["automatic_install_count"], 20)
+        self.assertEqual(report["guidance_only_count"], 30)
         self.assertEqual(report["task_count"], 63)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
@@ -95,6 +95,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("apbs", report["automatic_install_ids"])
         self.assertIn("fpocket", report["automatic_install_ids"])
         self.assertIn("p2rank", report["guidance_only_ids"])
+        self.assertIn("smina", report["automatic_install_ids"])
+        self.assertIn("binana", report["guidance_only_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -102,7 +104,19 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 48)
+        self.assertEqual(report["software_count"], 50)
+
+    def test_smina_and_binana_keep_automatic_and_guided_routes_separate(self):
+        smina = bioinstall.load_recipe("smina")
+        self.assertEqual(smina["install"]["package"], "smina=2020.12.10")
+        self.assertEqual(smina["verify"]["argv"], ["smina", "--help"])
+        self.assertEqual(set(smina["install"]["platforms"]), {"linux", "macos", "windows"})
+        binana = bioinstall.load_recipe("binana")
+        self.assertFalse(binana["install"]["automatic"])
+        with patch.object(bioinstall, "run") as run_command, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(binana, apply=True)
+        run_command.assert_not_called()
         run_command.assert_not_called()
 
     def test_task_suggestions_are_read_only_and_include_platform_state(self):
