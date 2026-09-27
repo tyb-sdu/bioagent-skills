@@ -58,7 +58,7 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、52 款软件配方、67 类任务标签**，其中 21 款具有自动安装路径，31 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。此前 20 款自动配方的全部已声明操作系统路线在 [55 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36328811307)中通过；新增 DSSP 路线另行测试。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、52 款软件配方、67 类任务标签**，其中 21 款具有自动安装路径，31 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。21 款自动配方的全部已声明操作系统路线在 [58 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36330446298)中通过。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
 
 `plan` 和 `suggest` 的 `supported_here` 对自动配方检查当前操作系统、处理器架构和已知 Python 版本；引导型配方仅检查已列出的操作系统。`ready_here` 还要求本机已有安装前提（例如 conda），具体障碍见 `blocking_reasons`。不支持的自动安装目标不会展示可执行命令；某些配方会显示只提供步骤的 `manual_fallback`。这些状态不是依赖求解或安装成功的保证。`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
 

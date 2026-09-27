@@ -27,12 +27,15 @@ completed successfully on commit `e4cf709`. This includes the new fpocket
 Linux and macOS jobs; all 19 automatic recipes passed on every declared
 operating-system route. P2Rank remains guidance-only and has no automatic
 installation job.
-The later DSSP jobs are separate from the historical 55-job run; MolProbity is
-guidance-only and has no automatic installation job.
 On 2026-09-27, [the 55-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36328811307)
 completed successfully on commit `6fbd4d3`. This includes smina on Linux,
 Windows and macOS; all 20 automatic recipes passed on every declared
 operating-system route. BINANA remains guidance-only and has no automatic
+installation job.
+On 2026-09-27, [the 58-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36330446298)
+completed successfully on commit `f251617`. This includes DSSP on Linux,
+Windows and macOS; all 21 automatic recipes passed on every declared
+operating-system route. MolProbity remains guidance-only and has no automatic
 installation job.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
