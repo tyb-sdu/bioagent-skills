@@ -1,0 +1,32 @@
+{
+  "id": "fpocket",
+  "name": "fpocket",
+  "summary": "Geometry-based detection and description of protein binding pockets from structures.",
+  "tasks": ["binding-pocket-detection", "structure-analysis", "protein-interface-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"]},
+    "automatic": true,
+    "environment": "bio-fpocket",
+    "channel": "conda-forge",
+    "package": "fpocket=4.2.3",
+    "manual_fallback": {
+      "platforms": ["windows"],
+      "steps": [
+        "The reviewed fpocket conda-forge 4.2.3 release has no native Windows build. Use a separately prepared Linux/WSL environment and rerun plan there; do not execute the Linux command in native Windows.",
+        "Check the maintainer's source or container instructions if WSL is unsuitable, and review the container image tag and mount paths before running it."
+      ],
+      "verify_note": "Within the chosen Linux environment, run the fpocket command and compare a small public structure with the maintainer examples."
+    }
+  },
+  "verify": {"argv": ["fpocket", "-h"]},
+  "notes": ["The conda package contains the command-line program; this route does not install a GUI or run pocket detection on user structures. Pocket rank and druggability scores require scientific review."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/Discngine/fpocket/blob/master/README.md"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/fpocket"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/fpocket/4.2.3"},
+    {"type": "windows-fallback", "url": "https://learn.microsoft.com/en-us/windows/wsl/install"},
+    {"type": "paper", "url": "https://doi.org/10.1186/1471-2105-10-168"}
+  ]
+}

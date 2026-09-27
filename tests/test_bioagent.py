@@ -43,6 +43,12 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertTrue(recipe["install"]["automatic"])
         classify.assert_not_called()
 
+    def test_binding_pocket_tool_names_route_without_model(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            self.assertEqual(bioagent.route_request("请安装 fpocket", None)["tool_id"], "fpocket")
+            self.assertEqual(bioagent.route_request("请安装 P2Rank", None)["tool_id"], "p2rank")
+        classify.assert_not_called()
+
     def test_foundry_names_do_not_confuse_older_models_or_rosetta(self):
         with patch.object(bioagent, "classify_request") as classify:
             self.assertEqual(bioagent.route_request("安装 RFdiffusion3", None)["tool_id"], "rfdiffusion3")

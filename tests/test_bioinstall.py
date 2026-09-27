@@ -74,16 +74,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 46)
+        self.assertGreaterEqual(len(recipes), 48)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 46)
-        self.assertEqual(report["automatic_install_count"], 18)
-        self.assertEqual(report["guidance_only_count"], 28)
-        self.assertEqual(report["task_count"], 62)
+        self.assertEqual(report["software_count"], 48)
+        self.assertEqual(report["automatic_install_count"], 19)
+        self.assertEqual(report["guidance_only_count"], 29)
+        self.assertEqual(report["task_count"], 63)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -93,6 +93,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("meeko", report["automatic_install_ids"])
         self.assertIn("pdb2pqr", report["automatic_install_ids"])
         self.assertIn("apbs", report["automatic_install_ids"])
+        self.assertIn("fpocket", report["automatic_install_ids"])
+        self.assertIn("p2rank", report["guidance_only_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -100,7 +102,7 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 46)
+        self.assertEqual(report["software_count"], 48)
         run_command.assert_not_called()
 
     def test_task_suggestions_are_read_only_and_include_platform_state(self):
@@ -174,6 +176,30 @@ class CatalogTests(unittest.TestCase):
         propka = bioinstall.load_recipe("propka")
         self.assertEqual(propka["install"]["package"], "propka==3.5.1")
         self.assertEqual(propka["verify"]["argv"], ["python", "-m", "propka", "--help"])
+
+    def test_binding_pocket_routes_distinguish_automatic_and_guided_installation(self):
+        fpocket = bioinstall.load_recipe("fpocket")
+        self.assertEqual(fpocket["install"]["package"], "fpocket=4.2.3")
+        self.assertTrue(fpocket["install"]["automatic"])
+        self.assertEqual(fpocket["verify"]["argv"], ["fpocket", "-h"])
+        p2rank = bioinstall.load_recipe("p2rank")
+        self.assertFalse(p2rank["install"]["automatic"])
+        self.assertEqual(p2rank["install"]["kind"], "binary")
+        self.assertEqual({candidate["id"] for candidate in bioinstall.suggest_recipes("binding-pocket-detection")["candidates"]}, {"fpocket", "p2rank"})
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall.shutil, "which", return_value="conda"), patch.object(
+            bioinstall, "run"
+        ) as run_command, contextlib.redirect_stdout(io.StringIO()):
+            plan = bioinstall.build_plan(fpocket)
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(fpocket, apply=True)
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(p2rank, apply=True)
+        self.assertFalse(plan["supported_here"])
+        self.assertTrue(plan["manual_fallback_here"])
+        self.assertNotIn("commands", plan)
+        run_command.assert_not_called()
 
     def test_electrostatics_tools_use_pinned_isolated_routes(self):
         pdb2pqr = bioinstall.load_recipe("pdb2pqr")

@@ -1,0 +1,26 @@
+{
+  "id": "p2rank",
+  "name": "P2Rank",
+  "summary": "Machine-learning prediction of protein ligand-binding sites from structures.",
+  "tasks": ["binding-pocket-detection", "structure-analysis"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Check for a local Java runtime, version 17 through 23, as documented for the pinned P2Rank 2.5.1 release; choose the official 2.5.1 package only if this prerequisite is met.",
+      "Download the maintainer's p2rank_2.5.1.tar.gz release asset (275625956 bytes) from https://github.com/rdk/p2rank/releases/tag/2.5.1 into a user-owned directory, without piping its contents into a shell.",
+      "Before extraction, compare its SHA-256 with d243f2d9036ac053fefb9407b5fe1c85f4fe077c519fd975ac585e995feab274 from the GitHub release asset metadata; inspect archive paths and extract only to the chosen directory.",
+      "Run the packaged prank launcher from its extracted directory. On Windows, check the maintainer's launcher instructions and use Git Bash if required; do not silently install Java or Git Bash."
+    ],
+    "verify_note": "Run the packaged prank command without input to check startup, then use the maintainer's small test_data/1fbl.pdb example only after reviewing where it writes outputs. Record the launcher path, Java version and archive digest."
+  },
+  "verify": {"argv": []},
+  "notes": ["The approximately 263 MiB official release bundle is guidance-only: the agent does not automatically download, extract, or execute it. P2Rank is a local predictor, not the PrankWeb online service."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/rdk/p2rank/blob/2.5.1/README.md"},
+    {"type": "release", "url": "https://github.com/rdk/p2rank/releases/tag/2.5.1"},
+    {"type": "release-metadata", "url": "https://api.github.com/repos/rdk/p2rank/releases/tags/2.5.1"},
+    {"type": "paper", "url": "https://doi.org/10.1186/s13321-018-0285-8"}
+  ]
+}
