@@ -17,6 +17,12 @@ printed by `doctor`, so a moving `*-latest` runner label should not be treated
 as permanent coverage of a specific architecture. Only a completed successful
 job is evidence for that tested runner.
 
+On 2026-09-27, [the 50-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36325910741)
+completed successfully on commit `669e827`. All 18 automatic recipes passed
+their Linux job, and every declared operating-system route passed its configured
+job in that run. This is a time-stamped installation observation, not a guarantee
+about future package releases, other architectures, or scientific accuracy.
+
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the
 native `Scripts/conda.exe`. The installer now resolves that executable from the
