@@ -61,6 +61,17 @@ class TerminalAgentTests(unittest.TestCase):
             self.assertEqual(bioagent.route_request("安装 MolProbity", None)["tool_id"], "molprobity")
         classify.assert_not_called()
 
+    def test_rna_tools_and_secondary_structure_task_route_without_model(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            self.assertEqual(bioagent.route_request("安装 ViennaRNA", None)["tool_id"], "viennarna")
+            self.assertEqual(bioagent.route_request("安装 RNAstructure", None)["tool_id"], "rnastructure")
+            intent = bioagent.route_request("我需要 RNA 二级结构预测软件", None)
+            self.assertEqual(intent["task_id"], "rna-secondary-structure-prediction")
+            with self.assertRaisesRegex(bioagent.AgentError, "Multiple reviewed tools"):
+                bioagent.resolve_intent(intent, "我需要 RNA 二级结构预测软件")
+            self.assertEqual(bioagent.mentioned_tools("安装 RNAfold"), [])
+        classify.assert_not_called()
+
     def test_binding_pocket_task_is_recognized_without_guessing_a_tool(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("我需要蛋白结合口袋检测软件", None)

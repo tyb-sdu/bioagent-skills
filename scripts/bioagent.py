@@ -44,6 +44,7 @@ TASK_PHRASES = {
     "molecular-dynamics": ("分子动力学", "moleculardynamics"),
     "trajectory-analysis": ("轨迹分析", "trajectoryanalysis"),
     "quantum-chemistry": ("量子化学", "quantumchemistry"),
+    "rna-secondary-structure-prediction": ("rna二级结构预测", "rnasecondarystructureprediction"),
 }
 SKILL_ROOT = (
     resources.files("bioagent_skills.skill_docs")

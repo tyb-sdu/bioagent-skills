@@ -17,6 +17,14 @@ printed by `doctor`, so a moving `*-latest` runner label should not be treated
 as permanent coverage of a specific architecture. Only a completed successful
 job is evidence for that tested runner.
 
+ViennaRNA's Python-only interface has three configured jobs. Its verification
+also exercises the compiled folding bindings with a ten-base synthetic RNA,
+without checking scientific accuracy or running user data. It does not test
+or install RNAfold and other full-suite executables. RNAstructure remains
+guidance-only. Automatic pip installations now require wheels for the package
+and dependencies; a solver or wheel-compatibility failure must not be reported
+as a verified installation, and no source-build fallback is attempted.
+
 On 2026-09-27, [the 50-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36325910741)
 completed successfully on commit `669e827`. All 18 automatic recipes passed
 their Linux job, and every declared operating-system route passed its configured

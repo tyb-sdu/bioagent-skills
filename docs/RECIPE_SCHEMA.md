@@ -30,4 +30,4 @@ Before upgrading a guidance-only recipe to `automatic: true`:
 4. Run installation and verification on each declared platform. Record the tested platform, date, and version.
 5. Add a test covering plan construction, idempotence, and failure behavior.
 
-The first release intentionally implements automatic execution only for isolated conda/Python environments. Source builds, container images, binaries and model downloads remain guidance-only until their specific artifacts and platform behavior are verified.
+Automatic execution supports only isolated conda/Python environments. Pip uses `--only-binary=:all:` for the package and dependencies; missing compatible wheels cause failure rather than an implicit source build. Source builds, container images, binaries and model downloads remain guidance-only until their specific artifacts and platform behavior are verified. A Python interface must not be presented as its full command-line suite; document that distinction in the recipe when applicable.

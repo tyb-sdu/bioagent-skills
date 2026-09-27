@@ -1,0 +1,31 @@
+{
+  "id": "viennarna",
+  "name": "ViennaRNA (Python interface)",
+  "aliases": ["ViennaRNA", "ViennaRNA Package"],
+  "summary": "Local Python interface for RNA secondary-structure prediction, thermodynamic ensembles and RNA-RNA interactions; not the full command-line suite.",
+  "tasks": ["nucleic-acid-thermodynamics", "nucleic-acid-structure-prediction", "nucleic-acid-sequence-design", "rna-secondary-structure-prediction", "rna-rna-interaction"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-viennarna",
+    "package": "ViennaRNA==2.7.2",
+    "min_python": "3.10",
+    "python_versions": ["3.10", "3.11", "3.12", "3.13"]
+  },
+  "verify": {"argv": ["python", "-c", "import math, RNA; print(RNA.__version__); s, e = RNA.fold('GCGCUUCGCC'); assert len(s) == 10 and math.isfinite(e); print(s, e)"]},
+  "notes": [
+    "SCOPE: this automatic route installs only the official Python interface imported as RNA. It does not provide RNAfold, RNAcofold, RNAmultifold or the full command-line suite. If the user needs those executables, stop before applying this route and use the official binary downloads or documented Bioconda route in a separate Linux/macOS environment; Windows also has official binary installers. Do not silently substitute a Python interface for a requested CLI.",
+    "The reviewed CPython 3.10-3.13 wheels cover the declared OS/architectures, not PyPy or Windows ARM64. Pip is wheel-only and will fail rather than compile source when a compatible wheel is unavailable. Wheel sizes are roughly 2-14 MB before dependencies. Linux wheels require compatible glibc or musl tags; OS/CPU matching alone does not guarantee wheel compatibility.",
+    "ViennaRNA has its own license, not this repository's MIT license: retain attribution, do not redistribute it or derived works for a fee beyond media costs, and contact the authors before including it in a commercial product. This repository distributes installation instructions, not the third-party software.",
+    "Verification imports the compiled bindings and folds one short synthetic RNA entirely offline. It checks basic execution, not prediction accuracy or suitability for protein-nucleic-acid docking or RNA 3D structure prediction. No user sequences are uploaded."
+  ],
+  "sources": [
+    {"type": "installation", "url": "https://viennarna.readthedocs.io/en/latest/install.html#python-interface-only"},
+    {"type": "package-release", "url": "https://pypi.org/pypi/ViennaRNA/2.7.2/json"},
+    {"type": "full-suite", "url": "https://www.tbi.univie.ac.at/RNA/"},
+    {"type": "license", "url": "https://github.com/ViennaRNA/ViennaRNA/blob/master/COPYING"},
+    {"type": "paper", "url": "https://doi.org/10.1186/1748-7188-6-26"}
+  ]
+}

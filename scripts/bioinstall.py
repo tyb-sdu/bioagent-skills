@@ -327,7 +327,7 @@ def build_plan(recipe: dict) -> dict:
         base = python.parent.parent
         result["commands"] = [
             [sys.executable, "-m", "venv", str(base)],
-            [str(python), "-m", "pip", "install", install["package"]],
+            [str(python), "-m", "pip", "install", "--only-binary=:all:", install["package"]],
         ]
     result["verification_command"] = resolve_verify(recipe)
     return result

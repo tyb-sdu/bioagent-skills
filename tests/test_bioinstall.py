@@ -74,16 +74,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 52)
+        self.assertGreaterEqual(len(recipes), 54)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 52)
-        self.assertEqual(report["automatic_install_count"], 21)
-        self.assertEqual(report["guidance_only_count"], 31)
-        self.assertEqual(report["task_count"], 67)
+        self.assertEqual(report["software_count"], 54)
+        self.assertEqual(report["automatic_install_count"], 22)
+        self.assertEqual(report["guidance_only_count"], 32)
+        self.assertEqual(report["task_count"], 69)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -99,6 +99,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("binana", report["guidance_only_ids"])
         self.assertIn("dssp", report["automatic_install_ids"])
         self.assertIn("molprobity", report["guidance_only_ids"])
+        self.assertIn("viennarna", report["automatic_install_ids"])
+        self.assertIn("rnastructure", report["guidance_only_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -106,7 +108,68 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 52)
+        self.assertEqual(report["software_count"], 54)
+
+    def test_viennarna_python_scope_and_supported_interpreters(self):
+        recipe = bioinstall.load_recipe("viennarna")
+        self.assertEqual(recipe["install"]["package"], "ViennaRNA==2.7.2")
+        self.assertNotIn("RNAfold", recipe.get("aliases", []))
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 12)):
+            plan = bioinstall.build_plan(recipe)
+        self.assertTrue(plan["ready_here"])
+        self.assertIn("--only-binary=:all:", plan["commands"][1])
+        self.assertEqual(plan["verification_command"][1], "-c")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="aarch64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 12)):
+            self.assertFalse(bioinstall.build_plan(recipe)["supported_here"])
+        with patch.object(bioinstall, "current_python_version", return_value=(3, 14)):
+            plan = bioinstall.build_plan(recipe)
+        self.assertFalse(plan["supported_here"])
+        self.assertNotIn("commands", plan)
+
+    def test_python_installation_never_silently_builds_source(self):
+        for recipe in bioinstall.all_recipes():
+            if recipe["install"]["kind"] != "python" or not recipe["install"]["automatic"]:
+                continue
+            with patch.object(bioinstall, "current_platform", return_value="linux"), patch.object(
+                bioinstall, "current_architecture", return_value="x86_64"
+            ), patch.object(bioinstall, "current_python_version", return_value=(3, 12)):
+                self.assertIn("--only-binary=:all:", bioinstall.build_plan(recipe)["commands"][1])
+
+    def test_failed_viennarna_verification_cannot_write_success_receipt(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(bioinstall, "INSTALL_ROOT", Path(directory)), patch.object(
+            bioinstall, "current_platform", return_value="windows"
+        ), patch.object(bioinstall, "current_architecture", return_value="x86_64"), patch.object(
+            bioinstall, "current_python_version", return_value=(3, 12)
+        ), patch.object(bioinstall, "run", side_effect=[None, None, RuntimeError("binding failed")]) as command, patch.object(
+            bioinstall, "write_receipt"
+        ) as receipt, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaisesRegex(RuntimeError, "binding failed"):
+                bioinstall.install_recipe(bioinstall.load_recipe("viennarna"), apply=True)
+        self.assertEqual(command.call_count, 3)
+        receipt.assert_not_called()
+
+    def test_rnastructure_remains_guidance_only(self):
+        recipe = bioinstall.load_recipe("rnastructure")
+        self.assertFalse(recipe["install"]["automatic"])
+        with patch.object(bioinstall, "run") as command, contextlib.redirect_stdout(io.StringIO()):
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(recipe, apply=True)
+        command.assert_not_called()
+
+    def test_viennarna_does_not_overwrite_existing_environment(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(bioinstall, "INSTALL_ROOT", Path(directory)), patch.object(
+            bioinstall, "current_platform", return_value="windows"
+        ), patch.object(bioinstall, "current_architecture", return_value="x86_64"), patch.object(
+            bioinstall, "current_python_version", return_value=(3, 12)
+        ), patch.object(bioinstall, "run") as command, contextlib.redirect_stdout(io.StringIO()):
+            bioinstall.env_python("bio-viennarna").parent.parent.mkdir(parents=True)
+            with self.assertRaisesRegex(bioinstall.RecipeError, "Target environment already exists"):
+                bioinstall.install_recipe(bioinstall.load_recipe("viennarna"), apply=True)
+        command.assert_not_called()
 
     def test_dssp_and_molprobity_use_distinct_installation_boundaries(self):
         dssp = bioinstall.load_recipe("dssp")

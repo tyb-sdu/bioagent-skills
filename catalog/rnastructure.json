@@ -1,0 +1,27 @@
+{
+  "id": "rnastructure",
+  "name": "RNAstructure",
+  "summary": "Local RNA/DNA secondary-structure prediction, base-pair probabilities and experimental constraint integration.",
+  "tasks": ["nucleic-acid-thermodynamics", "nucleic-acid-structure-prediction", "rna-secondary-structure-prediction", "rna-rna-interaction"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the official RNAstructure download page and GPLv2 terms. The reviewed release is 6.6 (April 2, 2026); choose the GUI or command-line distribution for the user's OS and CPU rather than treating them as interchangeable.",
+      "Download from the maintainer's HTTPS page using the user's own machine. The published MD5 list can help detect accidental corruption but is not a cryptographic authenticity guarantee; this recipe does not pin a reviewed SHA-256 or execute the installer/archive automatically.",
+      "Follow the package's bundled installation help. For command-line programs, keep the thermodynamic data_tables directory with the installation and set DATAPATH as the official help requires. Make environment changes only in the chosen session or explicitly approved scope; do not overwrite unrelated global settings.",
+      "Run the installed Fold program's help and then a small maintainer example to check access to the thermodynamic tables. Do not send user sequences to the optional web server."
+    ],
+    "verify_note": "For the selected command-line distribution, run Fold --help and an official short example with the documented DATAPATH; GUI verification is separate. A help screen alone does not prove the parameter tables can be read."
+  },
+  "verify": {"argv": []},
+  "notes": ["RNAstructure is a thermodynamic secondary-structure tool, not protein-RNA docking or a general RNA 3D predictor. Local binaries and source are documented for all three OSes, but specific CPU compatibility and installer behavior remain user-verified; this route is guidance-only."],
+  "sources": [
+    {"type": "installation", "url": "https://rna.urmc.rochester.edu/RNAstructureHelp.html"},
+    {"type": "download", "url": "https://rna.urmc.rochester.edu/RNAstructureDownload.html"},
+    {"type": "usage", "url": "https://rna.urmc.rochester.edu/Text/Fold.html"},
+    {"type": "overview", "url": "https://rna.urmc.rochester.edu/RNAstructure.html"},
+    {"type": "paper", "url": "https://doi.org/10.1186/1471-2105-11-129"}
+  ]
+}
