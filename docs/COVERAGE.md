@@ -16,4 +16,4 @@ The table assigns each of the 46 reviewed packages to one primary domain so noth
 | Molecular visualization | — | VMD, UCSF ChimeraX, PyMOL Open Source |
 | Quantum chemistry | Psi4 | — |
 
-Read [installation-test boundaries](INSTALL_TESTING.md) before interpreting the automatic routes. In particular, configured platform smoke tests cover only a subset of the 18 automatic recipes. Model weights, genetic databases, GPU drivers, commercial permissions, user registration, scientific input preparation, and research computation are not silently supplied by this repository.
+Read [installation-test boundaries](INSTALL_TESTING.md) before interpreting the automatic routes. Each of the 18 automatic recipes has at least one configured installation smoke job, but only a subset of its declared platforms and architectures may be tested, and a configured job is not a passing result. Model weights, genetic databases, GPU drivers, commercial permissions, user registration, scientific input preparation, and research computation are not silently supplied by this repository.

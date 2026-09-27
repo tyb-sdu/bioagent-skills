@@ -2,6 +2,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +16,12 @@ SPEC.loader.exec_module(bioinstall)
 
 
 class CatalogTests(unittest.TestCase):
+    def test_every_automatic_recipe_has_installation_smoke_job(self):
+        workflow = (MODULE_PATH.parents[1] / ".github" / "workflows" / "scientific-smoke.yml").read_text(encoding="utf-8")
+        job_tools = set(re.findall(r"^\s*- \{tool: ([a-z0-9-]+), os: (?:ubuntu|windows|macos)-latest\}$", workflow, re.MULTILINE))
+        automatic = {recipe["id"] for recipe in bioinstall.all_recipes() if recipe["install"]["automatic"]}
+        self.assertEqual(automatic, job_tools)
+
     def test_conda_batch_launcher_resolves_sibling_native_executable(self):
         with tempfile.TemporaryDirectory(prefix="bioagent-conda-") as directory:
             root = Path(directory) / "Miniforge With Spaces"

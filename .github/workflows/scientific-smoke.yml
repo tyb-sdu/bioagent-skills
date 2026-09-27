@@ -17,6 +17,11 @@ on:
       - catalog/openmmforcefields.json
       - catalog/pdb2pqr.json
       - catalog/apbs.json
+      - catalog/openmm.json
+      - catalog/rdkit.json
+      - catalog/gromacs.json
+      - catalog/psi4.json
+      - catalog/mdanalysis.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -35,6 +40,11 @@ on:
       - catalog/openmmforcefields.json
       - catalog/pdb2pqr.json
       - catalog/apbs.json
+      - catalog/openmm.json
+      - catalog/rdkit.json
+      - catalog/gromacs.json
+      - catalog/psi4.json
+      - catalog/mdanalysis.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -88,6 +98,11 @@ jobs:
           - {tool: apbs, os: ubuntu-latest}
           - {tool: apbs, os: windows-latest}
           - {tool: apbs, os: macos-latest}
+          - {tool: openmm, os: ubuntu-latest}
+          - {tool: rdkit, os: ubuntu-latest}
+          - {tool: gromacs, os: ubuntu-latest}
+          - {tool: psi4, os: ubuntu-latest}
+          - {tool: mdanalysis, os: ubuntu-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
