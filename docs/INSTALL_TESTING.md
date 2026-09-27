@@ -27,8 +27,11 @@ completed successfully on commit `e4cf709`. This includes the new fpocket
 Linux and macOS jobs; all 19 automatic recipes passed on every declared
 operating-system route. P2Rank remains guidance-only and has no automatic
 installation job.
-The later smina jobs are separate from the historical 52-job run; BINANA is
-guidance-only and has no automatic installation job.
+On 2026-09-27, [the 55-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36328811307)
+completed successfully on commit `6fbd4d3`. This includes smina on Linux,
+Windows and macOS; all 20 automatic recipes passed on every declared
+operating-system route. BINANA remains guidance-only and has no automatic
+installation job.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the
