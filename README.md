@@ -53,9 +53,28 @@ python scripts/bioinstall.py plan openmm
 python scripts/bioinstall.py install openmm
 python scripts/bioinstall.py install openmm --apply
 python scripts/bioinstall.py verify openmm
+python scripts/bioinstall.py status openmm
+python scripts/bioinstall.py usage openmm
 ```
 
 `plan` 和 `suggest` 的 `supported_here` 对自动配方检查当前操作系统、处理器架构和已知 Python 版本；引导型配方仅检查已列出的操作系统。`ready_here` 还要求本机已有安装前提（例如 conda），具体障碍见 `blocking_reasons`。不支持的自动安装目标不会展示可执行命令；某些配方会显示只提供步骤的 `manual_fallback`。这些状态不是依赖求解或安装成功的保证。`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
+
+### 安装后的状态与调用方式
+
+`status <id>` 只读取环境、包版本和最新安装收据摘要；不会导入科研软件、重装包或跑计算。可能的 `state` 包括：
+
+| 状态 | 含义 |
+| --- | --- |
+| `package-present` | 找到目标环境并读到包版本，不等于当前验收已通过 |
+| `package-unconfirmed` | 环境存在，但包版本无法确认 |
+| `environment-missing` | 未找到预期的独立环境 |
+| `manager-unavailable` | 无法调用 conda，不能判断其环境是否还在 |
+| `inspection-error` | 环境查询失败或遇到同名环境歧义 |
+| `guidance-only` | 当前没有自动检查该人工安装路线的能力 |
+
+`receipt_version_matches_current` 只比较顶层软件版本，不能证明依赖或文件没有变化。收据是历史记录；损坏、超出读取上限或指向符号链接的收据不会被采信，存储的命令也不会被重放。成功的新安装记录还包含处理器架构、安装器 Python 版本和环境名。
+
+`usage <id>` 在确认包版本后显示 `invocation_argv` 和适合本机终端的 `invocation_command`。Python 库使用隔离环境中的解释器；命令行软件使用其入口。它只展示命令，**不会运行命令或自动开始科研任务**。例如 Vina 的 conda 调用以 `conda run --prefix <实际环境路径> vina` 为前缀。请再按软件维护者文档选择输入文件和参数；若当前状态不明确，命令字段保持空值。
 
 ### 终端智能体入口：离线规则或本地模型
 

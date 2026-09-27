@@ -7,12 +7,14 @@ on:
       - catalog/pdbfixer.json
       - catalog/autodock-vina.json
       - scripts/bioinstall.py
+      - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
   pull_request:
     paths:
       - catalog/pdbfixer.json
       - catalog/autodock-vina.json
       - scripts/bioinstall.py
+      - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
   workflow_dispatch:
 
@@ -49,6 +51,8 @@ jobs:
         run: python scripts/bioinstall.py install ${{ matrix.tool }} --apply
       - name: Repeat the basic verification
         run: python scripts/bioinstall.py verify ${{ matrix.tool }}
+      - name: Check installed environment, receipt and invocation handoff
+        run: python tests/check_installed_handoff.py ${{ matrix.tool }}
       - name: Preserve verified installation receipt
         uses: actions/upload-artifact@v4
         with:

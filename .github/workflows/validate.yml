@@ -27,6 +27,8 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/bioagent-smoke/bin/bioinstall" validate
           "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" --help
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioinstall" status alphafold3 | grep -q '"state": "guidance-only"'
+          "$RUNNER_TEMP/bioagent-smoke/bin/bioinstall" usage alphafold3 | grep -q '"invocation_argv": null'
           "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" ask "安装 OpenMM" | grep -q '"tool_id": "openmm"'
           "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" skills list
           "$RUNNER_TEMP/bioagent-smoke/bin/bioagent" skills export --to "$RUNNER_TEMP/bioagent-export/.agents/skills"

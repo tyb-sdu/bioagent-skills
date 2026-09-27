@@ -13,6 +13,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -28,6 +29,7 @@ PACKAGE_PATTERN = re.compile(r"^[A-Za-z0-9_.+\[\],=<>!~-]+$")
 KINDS = {"conda", "python", "binary", "source", "container", "model-data", "restricted"}
 PLATFORMS = {"linux", "macos", "windows"}
 ARCHITECTURES = {"x86_64", "aarch64", "ppc64le"}
+MAX_RECEIPT_BYTES = 128_000
 
 
 class RecipeError(ValueError):
@@ -304,12 +306,25 @@ def run(argv: list[str]) -> None:
     subprocess.run(argv, check=True)
 
 
+def conda_environment_prefix(environment: str) -> Path | None:
+    try:
+        result = subprocess.run(
+            [require_conda(), "env", "list", "--json"], check=True, capture_output=True, text=True, timeout=30
+        )
+    except subprocess.TimeoutExpired as error:
+        raise RecipeError("conda environment inspection timed out after 30 seconds") from error
+    data = json.loads(result.stdout)
+    environments = data.get("envs") if isinstance(data, dict) else None
+    if not isinstance(environments, list) or not all(isinstance(prefix, str) for prefix in environments):
+        raise RecipeError("conda returned an invalid environment list")
+    matches = sorted({prefix for prefix in environments if Path(prefix).name.casefold() == environment.casefold()})
+    if len(matches) > 1:
+        raise RecipeError(f"Multiple conda prefixes match environment {environment}; resolve the ambiguity manually")
+    return Path(matches[0]) if matches else None
+
+
 def conda_environment_exists(environment: str) -> bool:
-    result = subprocess.run(
-        [require_conda(), "env", "list", "--json"], check=True, capture_output=True, text=True
-    )
-    environments = json.loads(result.stdout).get("envs", [])
-    return any(Path(prefix).name.lower() == environment.lower() for prefix in environments)
+    return conda_environment_prefix(environment) is not None
 
 
 def installed_version(recipe: dict) -> str | None:
@@ -319,21 +334,120 @@ def installed_version(recipe: dict) -> str | None:
         if install["kind"] == "conda":
             result = subprocess.run(
                 [require_conda(), "list", "--name", install["environment"], "--json"],
-                check=True, capture_output=True, text=True,
+                check=True, capture_output=True, text=True, timeout=30,
             )
             packages = json.loads(result.stdout)
-            matches = [item["version"] for item in packages if item.get("name", "").lower() == package.lower()]
+            if not isinstance(packages, list) or not all(isinstance(item, dict) for item in packages):
+                return None
+            matches = [
+                item["version"] for item in packages
+                if isinstance(item.get("name"), str) and item["name"].casefold() == package.casefold()
+                and isinstance(item.get("version"), str)
+            ]
             return matches[0] if matches else None
         result = subprocess.run(
             [str(env_python(install["environment"])), "-m", "pip", "show", package],
-            check=True, capture_output=True, text=True,
+            check=True, capture_output=True, text=True, timeout=30,
         )
         for line in result.stdout.splitlines():
             if line.startswith("Version: "):
                 return line.partition(": ")[2]
-    except (OSError, subprocess.CalledProcessError, ValueError, KeyError):
+    except (OSError, subprocess.SubprocessError, ValueError, KeyError):
         return None
     return None
+
+
+def latest_receipt(recipe: dict) -> dict:
+    """Read a bounded historical summary; never return or replay stored commands."""
+    receipts = INSTALL_ROOT / "receipts"
+    paths = sorted(receipts.glob(f"{recipe['id']}-*.json"), reverse=True) if receipts.is_dir() else []
+    if not paths:
+        return {"receipt": None, "receipt_error": None}
+    path = paths[0]
+    try:
+        if path.is_symlink() or not path.is_file():
+            raise RecipeError("Receipt is not a regular file")
+        with path.open("rb") as source:
+            raw = source.read(MAX_RECEIPT_BYTES + 1)
+        if len(raw) > MAX_RECEIPT_BYTES:
+            raise RecipeError("Receipt exceeds the read limit")
+        record = json.loads(raw)
+        if not isinstance(record, dict) or record.get("id") != recipe["id"] or record.get("result") != "verified":
+            raise RecipeError("Receipt does not identify a verified historical install of this tool")
+        fields = ("installed_at_utc", "package_version", "platform", "architecture")
+        if any(record.get(key) is not None and (not isinstance(record[key], str) or len(record[key]) > 500) for key in fields):
+            raise RecipeError("Receipt summary fields are invalid")
+        summary = {key: record.get(key) for key in fields}
+        summary.update({"path": str(path), "historical_result": "verified"})
+        return {"receipt": summary, "receipt_error": None}
+    except (OSError, ValueError, UnicodeDecodeError) as error:
+        return {"receipt": None, "receipt_error": str(error)[:500]}
+
+
+def installation_status(recipe: dict) -> dict:
+    """Inspect the environment and package metadata, without running the tool."""
+    install = recipe["install"]
+    result = {
+        "id": recipe["id"], "name": recipe["name"], "kind": install["kind"],
+        "environment_name": install.get("environment"), "environment_prefix": None,
+        "state": "guidance-only", "package_version": None, "inspection_error": None,
+        **latest_receipt(recipe),
+        "receipt_version_matches_current": None,
+        "note": "Package metadata and historical receipts do not establish current operability. Use verify for a smoke test; no scientific computation was run.",
+    }
+    if not install["automatic"]:
+        return result
+    try:
+        if install["kind"] == "conda":
+            if not conda_executable():
+                result["state"] = "manager-unavailable"
+                return result
+            prefix = conda_environment_prefix(install["environment"])
+        else:
+            prefix = env_python(install["environment"]).parent.parent
+            if not prefix.exists():
+                prefix = None
+        if prefix is None:
+            result["state"] = "environment-missing"
+            return result
+        result["environment_prefix"] = str(prefix)
+        version = installed_version(recipe)
+        result["package_version"] = version
+        result["state"] = "package-present" if version is not None else "package-unconfirmed"
+        receipt = result["receipt"]
+        if version is not None and receipt and receipt["package_version"] is not None:
+            result["receipt_version_matches_current"] = version == receipt["package_version"]
+    except (OSError, ValueError, subprocess.CalledProcessError) as error:
+        result["state"] = "inspection-error"
+        result["inspection_error"] = str(error)[:500]
+    return result
+
+
+def display_command(argv: list[str]) -> str:
+    if os.name == "nt":
+        return "& " + " ".join("'" + argument.replace("'", "''") + "'" for argument in argv)
+    return shlex.join(argv)
+
+
+def usage_plan(recipe: dict) -> dict:
+    """Show an installed invocation prefix; never launch it or use receipt code."""
+    status = installation_status(recipe)
+    result = {
+        "id": recipe["id"], "status": status, "sources": recipe["sources"],
+        "invocation_argv": None, "invocation_command": None,
+        "command_shell": "PowerShell" if os.name == "nt" else "POSIX shell",
+        "note": "Commands are displayed, not executed. Python packages use the isolated interpreter; CLI tools use the reviewed executable. This command does not run user scripts or research jobs.",
+    }
+    if status["state"] != "package-present":
+        return result
+    install = recipe["install"]
+    if install["kind"] == "conda":
+        argv = [require_conda(), "run", "--prefix", status["environment_prefix"], recipe["verify"]["argv"][0]]
+    else:
+        argv = [str(env_python(install["environment"]))]
+    result["invocation_argv"] = argv
+    result["invocation_command"] = display_command(argv)
+    return result
 
 
 def write_receipt(recipe: dict, plan: dict) -> Path:
@@ -343,9 +457,13 @@ def write_receipt(recipe: dict, plan: dict) -> Path:
     stamp = installed_at.strftime("%Y%m%dT%H%M%S%fZ")
     path = receipts / f"{recipe['id']}-{stamp}.json"
     record = {
+        "receipt_schema": 2,
         "id": recipe["id"],
         "installed_at_utc": installed_at.isoformat(),
         "platform": current_platform(),
+        "architecture": current_architecture(),
+        "installer_python": sys.version.split()[0],
+        "environment_name": recipe["install"]["environment"],
         "commands": plan["commands"],
         "verification_command": plan["verification_command"],
         "package_version": installed_version(recipe),
@@ -380,6 +498,7 @@ def install_recipe(recipe: dict, apply: bool) -> None:
     run(plan["verification_command"])
     receipt = write_receipt(recipe, plan)
     print(f"Verified. Receipt: {receipt}")
+    print(f"Inspect with 'bioinstall status {recipe['id']}' and 'bioinstall usage {recipe['id']}'.")
 
 
 def main() -> int:
@@ -391,8 +510,12 @@ def main() -> int:
     sub.add_parser("doctor", help="Inspect local prerequisites without changing them")
     suggestion = sub.add_parser("suggest", help="Show read-only candidates for a reviewed task ID")
     suggestion.add_argument("task_id")
-    for command in ("plan", "install", "verify"):
-        subparser = sub.add_parser(command)
+    for command in ("plan", "install", "verify", "status", "usage"):
+        help_text = {
+            "status": "Inspect installed package metadata and historical receipt; never run the tool",
+            "usage": "Display the installed environment's invocation command; never execute it",
+        }.get(command)
+        subparser = sub.add_parser(command, help=help_text)
         subparser.add_argument("tool_id")
         if command == "install":
             subparser.add_argument("--apply", action="store_true")
@@ -429,6 +552,10 @@ def main() -> int:
             print(json.dumps(build_plan(load_recipe(args.tool_id)), ensure_ascii=False, indent=2))
         elif args.command == "install":
             install_recipe(load_recipe(args.tool_id), args.apply)
+        elif args.command == "status":
+            print(json.dumps(installation_status(load_recipe(args.tool_id)), ensure_ascii=False, indent=2))
+        elif args.command == "usage":
+            print(json.dumps(usage_plan(load_recipe(args.tool_id)), ensure_ascii=False, indent=2))
         elif args.command == "verify":
             recipe = load_recipe(args.tool_id)
             plan = build_plan(recipe)

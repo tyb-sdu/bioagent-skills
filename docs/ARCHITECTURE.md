@@ -50,3 +50,13 @@ AutoDock Vina has a read-only Windows `manual_fallback`; it never grants
 automatic installation on that platform.
 The deterministic `bioinstall` command works without Ollama. Software runs on
 the user's machine or chosen cluster, not on the maintainer's server.
+
+After installation, `bioinstall status <id>` queries isolated-environment
+metadata and reads only a bounded receipt summary. Historical verification and
+current package presence are separate facts. Metadata inspection does not run
+the software or prove that it works. `bioinstall usage <id>` returns an argument
+vector and a shell-quoted display command targeting the observed isolated
+environment only when the package version is recognized; it never executes that
+command. Receipt commands are never replayed, and installation authorization
+does not authorize scientific computation. These are installation-handoff
+helpers, not a general job runner.
