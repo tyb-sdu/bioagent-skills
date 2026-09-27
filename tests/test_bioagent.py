@@ -49,6 +49,18 @@ class TerminalAgentTests(unittest.TestCase):
             self.assertEqual(bioagent.route_request("请安装 P2Rank", None)["tool_id"], "p2rank")
         classify.assert_not_called()
 
+    def test_binding_pocket_task_is_recognized_without_guessing_a_tool(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("我需要蛋白结合口袋检测软件", None)
+        self.assertEqual(intent["task_id"], "binding-pocket-detection")
+        self.assertEqual(intent["tool_id"], "")
+        classify.assert_not_called()
+        with patch.object(bioagent.bioinstall, "current_platform", return_value="linux"), patch.object(
+            bioagent.bioinstall, "current_architecture", return_value="x86_64"
+        ):
+            with self.assertRaisesRegex(bioagent.AgentError, "Multiple reviewed tools"):
+                bioagent.resolve_intent(intent, "我需要蛋白结合口袋检测软件")
+
     def test_foundry_names_do_not_confuse_older_models_or_rosetta(self):
         with patch.object(bioagent, "classify_request") as classify:
             self.assertEqual(bioagent.route_request("安装 RFdiffusion3", None)["tool_id"], "rfdiffusion3")

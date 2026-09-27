@@ -37,6 +37,10 @@ TASK_PHRASES = {
     "protein-ligand-docking": (
         "蛋白小分子对接", "蛋白与小分子对接", "proteinliganddocking",
     ),
+    "binding-pocket-detection": (
+        "蛋白结合口袋检测", "蛋白结合口袋预测", "蛋白口袋检测",
+        "蛋白配体结合位点预测", "bindingpocketdetection",
+    ),
     "molecular-dynamics": ("分子动力学", "moleculardynamics"),
     "trajectory-analysis": ("轨迹分析", "trajectoryanalysis"),
     "quantum-chemistry": ("量子化学", "quantumchemistry"),
