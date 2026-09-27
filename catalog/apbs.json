@@ -13,6 +13,7 @@
     "package": "apbs=3.4.1"
   },
   "verify": {"argv": ["python", "-c", "import shutil, subprocess; p=shutil.which('apbs'); assert p, 'apbs executable missing'; r=subprocess.run([p, '--version'], capture_output=True, text=True); assert r.returncode in (0, 13), r.stderr; assert 'apbs' in (r.stdout + r.stderr).lower(), 'APBS version output missing'; print((r.stdout + r.stderr).strip())"]},
+  "usage": {"executable": "apbs"},
   "notes": ["The maintainer requests user registration before use; the installer does not register the user or submit structures to a web server.", "The conda-forge feedstock documents APBS --version returning exit code 13; verification checks the executable's version output and allows that documented code without accepting other failures. This does not validate a Poisson-Boltzmann calculation or PQR input."],
   "sources": [
     {"type": "installation", "url": "https://apbs.readthedocs.io/en/latest/getting/index.html"},

@@ -190,6 +190,15 @@ def validate_recipe(recipe: dict, path) -> None:
         raise RecipeError(f"{path.name}: verify.argv must contain nonempty strings")
     if install["automatic"] and not verify["argv"]:
         raise RecipeError(f"{path.name}: automatic recipe needs a verification command")
+    usage = recipe.get("usage")
+    if usage is not None and (
+        not install["automatic"]
+        or install["kind"] != "conda"
+        or not isinstance(usage, dict)
+        or not isinstance(usage.get("executable"), str)
+        or not re.fullmatch(r"[A-Za-z0-9_.-]+", usage["executable"])
+    ):
+        raise RecipeError(f"{path.name}: invalid conda usage executable")
     if not isinstance(recipe["sources"], list) or not recipe["sources"]:
         raise RecipeError(f"{path.name}: at least one source is required")
     for source in recipe["sources"]:
@@ -464,7 +473,8 @@ def usage_plan(recipe: dict) -> dict:
         return result
     install = recipe["install"]
     if install["kind"] == "conda":
-        argv = [require_conda(), "run", "--prefix", status["environment_prefix"], recipe["verify"]["argv"][0]]
+        executable = recipe.get("usage", {}).get("executable", recipe["verify"]["argv"][0])
+        argv = [require_conda(), "run", "--prefix", status["environment_prefix"], executable]
     else:
         argv = [str(env_python(install["environment"]))]
     result["invocation_argv"] = argv

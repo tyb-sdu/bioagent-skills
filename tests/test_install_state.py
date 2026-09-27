@@ -67,6 +67,16 @@ class InstallStateTests(unittest.TestCase):
         self.assertEqual(plan["status"]["state"], "package-present")
         verify.assert_not_called()
 
+    def test_apbs_usage_shows_scientific_cli_not_verification_wrapper(self):
+        with patch.object(bioinstall, "conda_executable", return_value="conda"), patch.object(
+            bioinstall, "conda_environment_prefix", return_value=Path("/isolated/bio-apbs")
+        ), patch.object(bioinstall, "installed_version", return_value="3.4.1"), patch.object(
+            bioinstall, "run"
+        ) as verify:
+            plan = bioinstall.usage_plan(bioinstall.load_recipe("apbs"))
+        self.assertEqual(plan["invocation_argv"][-1], "apbs")
+        verify.assert_not_called()
+
     def test_python_usage_points_to_isolated_interpreter(self):
         with tempfile.TemporaryDirectory(prefix="bioagent-state-") as directory, patch.object(
             bioinstall, "INSTALL_ROOT", Path(directory)
