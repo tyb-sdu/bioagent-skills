@@ -22,8 +22,11 @@ completed successfully on commit `669e827`. All 18 automatic recipes passed
 their Linux job, and every declared operating-system route passed its configured
 job in that run. This is a time-stamped installation observation, not a guarantee
 about future package releases, other architectures, or scientific accuracy.
-The later fpocket jobs are separate from that historical 50-job run; P2Rank is
-guidance-only and has no automatic installation job.
+On 2026-09-27, [the 52-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36327579800)
+completed successfully on commit `e4cf709`. This includes the new fpocket
+Linux and macOS jobs; all 19 automatic recipes passed on every declared
+operating-system route. P2Rank remains guidance-only and has no automatic
+installation job.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the
