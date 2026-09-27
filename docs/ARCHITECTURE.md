@@ -26,8 +26,8 @@ privacy settings. No software is installed merely by sending a natural-language
 request, and noninteractive `--apply` is disabled.
 
 Automatic installation is intentionally narrower than task recognition. As of
-this release, 13 reviewed conda/PyPI recipes can be applied to fresh isolated
-environments on their reviewed targets; the other 30 are guidance-only because of weights, licenses,
+this release, 18 reviewed conda/PyPI recipes can be applied to fresh isolated
+environments on their reviewed targets; the other 28 are guidance-only because of weights, licenses,
 platform artifacts, or unverified dependency resolution. A successful import
 or `--help` is an installation smoke test, not evidence that scientific results
 are valid. The local model's classification may be wrong, so users must inspect

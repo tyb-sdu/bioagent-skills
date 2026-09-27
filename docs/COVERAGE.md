@@ -10,10 +10,10 @@ The table assigns each of the 46 reviewed packages to one primary domain so noth
 | Protein design | — | ProteinMPNN, LigandMPNN, RFdiffusion, RFdiffusion3, Rosetta, PyRosetta |
 | Docking and interactions | AutoDock Vina, Meeko, ProLIF | AutoDock-GPU, GNINA, DiffDock, HADDOCK3, LightDock, PLIP |
 | Molecular dynamics and free energy | GROMACS, OpenMM, MDAnalysis, MDTraj, OpenMMForceFields | NAMD, AmberTools, OpenFE |
-| Structure preparation, electrostatics and surface analysis | RDKit, PDBFixer, PROPKA, FreeSASA, Open Babel, ParmEd, Gemmi | PDB2PQR, APBS |
+| Structure preparation, electrostatics and surface analysis | RDKit, PDBFixer, PROPKA, FreeSASA, Open Babel, ParmEd, Gemmi, PDB2PQR, APBS | — |
 | Nucleic-acid thermodynamics and simulation | — | NUPACK 4, oxDNA |
 | Cryo-EM processing and model building | — | RELION, CryoSPARC, ModelAngelo |
 | Molecular visualization | — | VMD, UCSF ChimeraX, PyMOL Open Source |
 | Quantum chemistry | Psi4 | — |
 
-Read [installation-test boundaries](INSTALL_TESTING.md) before interpreting the automatic routes. In particular, configured platform smoke tests cover only a subset of the 16 automatic recipes. Model weights, genetic databases, GPU drivers, commercial permissions, user registration, scientific input preparation, and research computation are not silently supplied by this repository.
+Read [installation-test boundaries](INSTALL_TESTING.md) before interpreting the automatic routes. In particular, configured platform smoke tests cover only a subset of the 18 automatic recipes. Model weights, genetic databases, GPU drivers, commercial permissions, user registration, scientific input preparation, and research computation are not silently supplied by this repository.

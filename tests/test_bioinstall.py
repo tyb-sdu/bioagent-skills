@@ -68,8 +68,8 @@ class CatalogTests(unittest.TestCase):
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
         self.assertEqual(report["software_count"], 46)
-        self.assertEqual(report["automatic_install_count"], 16)
-        self.assertEqual(report["guidance_only_count"], 30)
+        self.assertEqual(report["automatic_install_count"], 18)
+        self.assertEqual(report["guidance_only_count"], 28)
         self.assertEqual(report["task_count"], 62)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
@@ -78,6 +78,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("ambertools", report["guidance_only_ids"])
         self.assertIn("openbabel", report["automatic_install_ids"])
         self.assertIn("meeko", report["automatic_install_ids"])
+        self.assertIn("pdb2pqr", report["automatic_install_ids"])
+        self.assertIn("apbs", report["automatic_install_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -160,6 +162,26 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(propka["install"]["package"], "propka==3.5.1")
         self.assertEqual(propka["verify"]["argv"], ["python", "-m", "propka", "--help"])
 
+    def test_electrostatics_tools_use_pinned_isolated_routes(self):
+        pdb2pqr = bioinstall.load_recipe("pdb2pqr")
+        self.assertEqual(pdb2pqr["install"]["package"], "pdb2pqr==3.7.1")
+        self.assertEqual(pdb2pqr["verify"]["argv"], ["python", "-m", "pdb2pqr", "--help"])
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 14)):
+            plan = bioinstall.build_plan(pdb2pqr)
+        self.assertFalse(plan["supported_here"])
+        self.assertNotIn("commands", plan)
+        apbs = bioinstall.load_recipe("apbs")
+        self.assertEqual(apbs["install"]["package"], "apbs=3.4.1")
+        self.assertEqual(apbs["verify"]["argv"][0], "python")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall.shutil, "which", return_value="conda"):
+            plan = bioinstall.build_plan(apbs)
+        self.assertTrue(plan["ready_here"])
+        self.assertEqual(plan["commands"][0][-1], "apbs=3.4.1")
+
     def test_new_conda_routes_are_pinned_and_platform_reviewed(self):
         expected = {
             "openbabel": ("openbabel=3.2.1", "obabel"),
@@ -169,6 +191,7 @@ class CatalogTests(unittest.TestCase):
             "gemmi": ("gemmi=0.7.5", "python"),
             "prolif": ("prolif=2.1.0", "python"),
             "openmmforcefields": ("openmmforcefields=0.16.0", "python"),
+            "apbs": ("apbs=3.4.1", "python"),
         }
         for tool_id, (package, executable) in expected.items():
             with self.subTest(tool_id=tool_id):

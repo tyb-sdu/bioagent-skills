@@ -6,18 +6,18 @@
   "install": {
     "kind": "python",
     "platforms": ["linux", "macos", "windows"],
-    "automatic": false,
-    "steps": [
-      "Read the current PDB2PQR maintainer documentation and select the documented PyPI or source route for the user's operating system.",
-      "Review the Python and dependency requirements, then install into a new virtual environment; avoid the optional web service when the user requires local-only processing.",
-      "Check the installed CLI help before preparing any experimental structure, and review the selected force field and protonation assumptions separately."
-    ],
-    "verify_note": "Run the documented CLI help in the isolated environment. A small prepared-structure example is a separate scientific check."
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-pdb2pqr",
+    "package": "pdb2pqr==3.7.1",
+    "min_python": "3.11",
+    "python_versions": ["3.11", "3.12", "3.13"]
   },
-  "verify": {"argv": []},
-  "notes": ["The local installer must not upload structures to the public PDB2PQR/APBS web server. Protonation and force-field choices are scientific decisions."],
+  "verify": {"argv": ["python", "-m", "pdb2pqr", "--help"]},
+  "notes": ["The maintainer requests user registration before using the software; the installer does not perform registration or use the public web server.", "The pinned release publishes a universal Python wheel, but dependency availability is still platform-specific. Verification only checks CLI help; force-field and protonation choices require scientific review."],
   "sources": [
-    {"type": "installation", "url": "https://pdb2pqr.readthedocs.io/en/latest/"},
-    {"type": "repository", "url": "https://github.com/Electrostatics/pdb2pqr"}
+    {"type": "installation", "url": "https://pdb2pqr.readthedocs.io/en/latest/getting.html"},
+    {"type": "usage", "url": "https://pdb2pqr.readthedocs.io/en/latest/using/index.html"},
+    {"type": "package-release", "url": "https://pypi.org/project/pdb2pqr/3.7.1/"}
   ]
 }

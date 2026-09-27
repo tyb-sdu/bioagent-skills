@@ -4,19 +4,19 @@
   "summary": "Continuum electrostatics calculations for biomolecular systems.",
   "tasks": ["biomolecular-electrostatics", "molecular-energy"],
   "install": {
-    "kind": "binary",
+    "kind": "conda",
     "platforms": ["linux", "macos", "windows"],
-    "automatic": false,
-    "steps": [
-      "Read the official APBS download instructions and registration request before choosing a local installation route.",
-      "Select the maintainer's platform-specific release archive, then check OS, runtime libraries, archive contents, and any checksum supplied by the maintainer.",
-      "Extract into a user-controlled location and keep the APBS executable and libraries together; do not edit shell startup files or system-wide paths automatically."
-    ],
-    "verify_note": "Use the official installation guide's command-line and example checks in the chosen location; do not submit structures to the optional web server without user approval."
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-apbs",
+    "channel": "conda-forge",
+    "package": "apbs=3.4.1"
   },
-  "verify": {"argv": []},
-  "notes": ["The maintainer recommends precompiled binaries and requests user registration. Its web server is an alternative, not a local install."],
+  "verify": {"argv": ["python", "-c", "import shutil, subprocess; p=shutil.which('apbs'); assert p, 'apbs executable missing'; r=subprocess.run([p, '--version'], capture_output=True, text=True); assert r.returncode in (0, 13), r.stderr; assert 'apbs' in (r.stdout + r.stderr).lower(), 'APBS version output missing'; print((r.stdout + r.stderr).strip())"]},
+  "notes": ["The maintainer requests user registration before use; the installer does not register the user or submit structures to a web server.", "The conda-forge feedstock documents APBS --version returning exit code 13; verification checks the executable's version output and allows that documented code without accepting other failures. This does not validate a Poisson-Boltzmann calculation or PQR input."],
   "sources": [
-    {"type": "installation", "url": "https://apbs.readthedocs.io/en/latest/getting/index.html"}
+    {"type": "installation", "url": "https://apbs.readthedocs.io/en/latest/getting/index.html"},
+    {"type": "package", "url": "https://github.com/conda-forge/apbs-feedstock"},
+    {"type": "package-release", "url": "https://anaconda.org/conda-forge/apbs/files?version=3.4.1"}
   ]
 }

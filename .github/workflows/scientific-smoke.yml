@@ -15,6 +15,8 @@ on:
       - catalog/gemmi.json
       - catalog/prolif.json
       - catalog/openmmforcefields.json
+      - catalog/pdb2pqr.json
+      - catalog/apbs.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -31,6 +33,8 @@ on:
       - catalog/gemmi.json
       - catalog/prolif.json
       - catalog/openmmforcefields.json
+      - catalog/pdb2pqr.json
+      - catalog/apbs.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -78,6 +82,12 @@ jobs:
           - {tool: prolif, os: macos-latest}
           - {tool: openmmforcefields, os: ubuntu-latest}
           - {tool: openmmforcefields, os: macos-latest}
+          - {tool: pdb2pqr, os: ubuntu-latest}
+          - {tool: pdb2pqr, os: windows-latest}
+          - {tool: pdb2pqr, os: macos-latest}
+          - {tool: apbs, os: ubuntu-latest}
+          - {tool: apbs, os: windows-latest}
+          - {tool: apbs, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
