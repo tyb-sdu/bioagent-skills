@@ -12,7 +12,6 @@ from importlib import resources
 import json
 from pathlib import Path
 import re
-import shutil
 import sys
 from urllib.error import HTTPError, URLError
 from urllib.request import ProxyHandler, Request, build_opener
@@ -243,7 +242,7 @@ def classify_request(query: str, model: str) -> dict:
         "platform": bioinstall.current_platform(),
         "architecture": bioinstall.current_architecture(),
         "python": f"{sys.version_info.major}.{sys.version_info.minor}",
-        "conda_on_path": bool(shutil.which("conda")),
+        "conda_on_path": bool(bioinstall.conda_executable()),
     }
     payload = {
         "model": model,

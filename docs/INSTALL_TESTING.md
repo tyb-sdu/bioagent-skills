@@ -13,6 +13,13 @@ printed by `doctor`, so a moving `*-latest` runner label should not be treated
 as permanent coverage of a specific architecture. Only a completed successful
 job is evidence for that tested runner.
 
+The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
+contained `condabin/conda.bat`, whereas the subprocess interface needed the
+native `Scripts/conda.exe`. The installer now resolves that executable from the
+same installation, uses it consistently for planning, probing and execution,
+and rejects orphan batch launchers. It does not enable `shell=True` to work
+around the bug. Regression tests exercise a prefix containing spaces.
+
 These tests do not use a GPU, run a molecular simulation or docking experiment,
 change user input structures, or validate scientific predictions. They do not
 test the Windows Vina manual fallback. No test runner environment is distributed

@@ -2,6 +2,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -14,6 +15,50 @@ SPEC.loader.exec_module(bioinstall)
 
 
 class CatalogTests(unittest.TestCase):
+    def test_conda_batch_launcher_resolves_sibling_native_executable(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-conda-") as directory:
+            root = Path(directory) / "Miniforge With Spaces"
+            launcher = root / "condabin" / "conda.bat"
+            executable = root / "Scripts" / "conda.exe"
+            launcher.parent.mkdir(parents=True)
+            executable.parent.mkdir()
+            launcher.touch()
+            executable.touch()
+            with patch.object(bioinstall.shutil, "which", side_effect=lambda name: str(launcher) if name == "conda" else None):
+                self.assertEqual(bioinstall.conda_executable(), str(executable.resolve()))
+                plan = bioinstall.build_plan(bioinstall.load_recipe("openmm"))
+            self.assertEqual(plan["commands"][0][0], str(executable.resolve()))
+            self.assertEqual(plan["verification_command"][0], str(executable.resolve()))
+
+    def test_orphan_batch_launcher_does_not_enable_installation(self):
+        with tempfile.TemporaryDirectory(prefix="bioagent-conda-") as directory:
+            launcher = Path(directory) / "condabin" / "conda.bat"
+            launcher.parent.mkdir()
+            launcher.touch()
+            with patch.object(bioinstall.shutil, "which", side_effect=lambda name: str(launcher) if name == "conda" else None):
+                self.assertIsNone(bioinstall.conda_executable())
+                with self.assertRaises(bioinstall.RecipeError):
+                    bioinstall.require_conda()
+
+    def test_environment_probe_uses_resolved_executable_without_shell(self):
+        with patch.object(bioinstall, "conda_executable", return_value="C:/Miniforge/Scripts/conda.exe"), patch.object(
+            bioinstall.subprocess, "run"
+        ) as command:
+            command.return_value.stdout = '{"envs": []}'
+            self.assertFalse(bioinstall.conda_environment_exists("bio-pdbfixer"))
+        self.assertEqual(command.call_args.args[0][0], "C:/Miniforge/Scripts/conda.exe")
+        self.assertNotIn("shell", command.call_args.kwargs)
+
+    def test_cli_reports_missing_executable_without_traceback(self):
+        with patch.object(bioinstall.sys, "argv", ["bioinstall", "verify", "mdanalysis"]), patch.object(
+            bioinstall, "run", side_effect=OSError("test executable is missing")
+        ), patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 12)), contextlib.redirect_stderr(io.StringIO()) as output:
+            self.assertEqual(bioinstall.main(), 2)
+        self.assertIn("Error: test executable is missing", output.getvalue())
+        self.assertNotIn("Traceback", output.getvalue())
+
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
         self.assertGreaterEqual(len(recipes), 18)
@@ -49,7 +94,7 @@ class CatalogTests(unittest.TestCase):
             plan = bioinstall.build_plan(recipe)
         self.assertTrue(plan["supported_here"])
         self.assertFalse(plan["ready_here"])
-        self.assertIn("conda is not on PATH", plan["blocking_reasons"])
+        self.assertIn("conda executable is unavailable", plan["blocking_reasons"][0])
 
     def test_pinned_mdanalysis_requires_python_311(self):
         recipe = bioinstall.load_recipe("mdanalysis")

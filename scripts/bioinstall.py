@@ -52,6 +52,31 @@ def current_python_version() -> tuple[int, int]:
     return sys.version_info[:2]
 
 
+def conda_executable() -> str | None:
+    """Resolve a native executable when Windows PATH exposes only conda.bat."""
+    launcher = shutil.which("conda")
+    if not launcher:
+        return None
+    launcher_path = Path(launcher)
+    if launcher_path.suffix.casefold() not in {".bat", ".cmd"}:
+        return launcher
+    direct = shutil.which("conda.exe")
+    candidates = ([Path(direct)] if direct else []) + [
+        root / "Scripts" / "conda.exe" for root in list(launcher_path.parents)[:3]
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return str(candidate.resolve())
+    return None
+
+
+def require_conda() -> str:
+    executable = conda_executable()
+    if not executable:
+        raise RecipeError("conda executable is unavailable; check PATH and the Windows conda.exe installation")
+    return executable
+
+
 def target_status(recipe: dict) -> dict:
     """Report known local blockers, not a guarantee that solving will succeed."""
     install = recipe["install"]
@@ -72,8 +97,8 @@ def target_status(recipe: dict) -> dict:
     supported = not reasons
     if not install["automatic"]:
         reasons.append("This recipe is guidance-only")
-    elif install["kind"] == "conda" and not shutil.which("conda"):
-        reasons.append("conda is not on PATH")
+    elif install["kind"] == "conda" and not conda_executable():
+        reasons.append("conda executable is unavailable; check PATH and the Windows conda.exe installation")
     fallback = install.get("manual_fallback", {})
     return {
         "supported_here": supported,
@@ -229,7 +254,7 @@ def resolve_verify(recipe: dict) -> list[str]:
     if not argv:
         return []
     if install["kind"] == "conda":
-        return ["conda", "run", "--name", install["environment"], *argv]
+        return [conda_executable() or "conda", "run", "--name", install["environment"], *argv]
     if install["kind"] == "python":
         executable = str(env_python(install["environment"]))
         if argv[0] != "python":
@@ -260,7 +285,7 @@ def build_plan(recipe: dict) -> dict:
         return result
     if install["kind"] == "conda":
         result["commands"] = [[
-            "conda", "create", "--yes", "--name", install["environment"],
+            conda_executable() or "conda", "create", "--yes", "--name", install["environment"],
             "--override-channels", "--channel", install["channel"],
             "--strict-channel-priority", install["package"],
         ]]
@@ -281,7 +306,7 @@ def run(argv: list[str]) -> None:
 
 def conda_environment_exists(environment: str) -> bool:
     result = subprocess.run(
-        ["conda", "env", "list", "--json"], check=True, capture_output=True, text=True
+        [require_conda(), "env", "list", "--json"], check=True, capture_output=True, text=True
     )
     environments = json.loads(result.stdout).get("envs", [])
     return any(Path(prefix).name.lower() == environment.lower() for prefix in environments)
@@ -293,7 +318,7 @@ def installed_version(recipe: dict) -> str | None:
     try:
         if install["kind"] == "conda":
             result = subprocess.run(
-                ["conda", "list", "--name", install["environment"], "--json"],
+                [require_conda(), "list", "--name", install["environment"], "--json"],
                 check=True, capture_output=True, text=True,
             )
             packages = json.loads(result.stdout)
@@ -344,8 +369,6 @@ def install_recipe(recipe: dict, apply: bool) -> None:
         raise RecipeError("Local prerequisites are not met: " + "; ".join(plan["blocking_reasons"]))
     install = recipe["install"]
     if install["kind"] == "conda":
-        if not shutil.which("conda"):
-            raise RecipeError("conda is not on PATH")
         if conda_environment_exists(install["environment"]):
             raise RecipeError(f"Conda environment already exists: {install['environment']}")
     else:
@@ -394,6 +417,7 @@ def main() -> int:
                 "normalized_architecture": current_architecture(),
                 "python": sys.version.split()[0],
                 "conda": shutil.which("conda"),
+                "conda_executable": conda_executable(),
                 "docker": shutil.which("docker"),
                 "apptainer": shutil.which("apptainer"),
                 "cmake": shutil.which("cmake"),
@@ -412,7 +436,7 @@ def main() -> int:
                 raise RecipeError("Automated verification is not available for this recipe here")
             run(plan["verification_command"])
             print("Verification passed")
-    except (RecipeError, subprocess.CalledProcessError, json.JSONDecodeError) as error:
+    except (RecipeError, subprocess.CalledProcessError, json.JSONDecodeError, OSError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 2
     return 0
