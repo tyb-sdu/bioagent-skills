@@ -58,7 +58,7 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、54 款软件配方、69 类任务标签**，其中 22 款具有自动安装路径，32 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。此前 21 款自动配方的全部已声明操作系统路线在 [58 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36330446298)中通过；新增 ViennaRNA Python 接口和 pip wheel-only 限制另行验证。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、54 款软件配方、69 类任务标签**，其中 22 款具有自动安装路径，32 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。22 款自动配方的全部已声明操作系统路线在 [61 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36332851248)中通过，包含 ViennaRNA Python 接口和 pip wheel-only 限制的实装验证。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
 
 ViennaRNA 的自动路线仅安装可 `import RNA` 的 Python 接口，**不会安装 RNAfold 等命令行套件**。需要完整套件时应按配方中的官方下载/安装说明另行选择。RNAstructure 暂时仅提供安装引导。所有自动 pip 路线只接受 wheel（含依赖），缺少兼容包时停止，不会偷偷转为源代码编译；第三方软件各自的许可不因本仓库采用 MIT 而改变。
 

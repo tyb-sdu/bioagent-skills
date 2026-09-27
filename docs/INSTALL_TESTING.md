@@ -35,6 +35,14 @@ completed successfully on commit `e4cf709`. This includes the new fpocket
 Linux and macOS jobs; all 19 automatic recipes passed on every declared
 operating-system route. P2Rank remains guidance-only and has no automatic
 installation job.
+
+On 2026-09-28, [the 61-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36332851248)
+completed successfully on commit `5a207c8`. All 22 automatic recipes passed
+every declared operating-system route in that run. ViennaRNA 2.7.2's Python
+interface passed on Linux, Windows and macOS; the other Python recipes also
+passed with the new wheel-only installation policy. These jobs use CPython
+3.12 and do not establish coverage of every declared Python version or CPU
+architecture. RNAstructure remains guidance-only with no automatic job.
 On 2026-09-27, [the 55-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36328811307)
 completed successfully on commit `6fbd4d3`. This includes smina on Linux,
 Windows and macOS; all 20 automatic recipes passed on every declared
