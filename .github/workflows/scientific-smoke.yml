@@ -99,10 +99,19 @@ jobs:
           - {tool: apbs, os: windows-latest}
           - {tool: apbs, os: macos-latest}
           - {tool: openmm, os: ubuntu-latest}
+          - {tool: openmm, os: windows-latest}
+          - {tool: openmm, os: macos-latest}
           - {tool: rdkit, os: ubuntu-latest}
+          - {tool: rdkit, os: windows-latest}
+          - {tool: rdkit, os: macos-latest}
           - {tool: gromacs, os: ubuntu-latest}
+          - {tool: gromacs, os: macos-latest}
           - {tool: psi4, os: ubuntu-latest}
+          - {tool: psi4, os: windows-latest}
+          - {tool: psi4, os: macos-latest}
           - {tool: mdanalysis, os: ubuntu-latest}
+          - {tool: mdanalysis, os: windows-latest}
+          - {tool: mdanalysis, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
