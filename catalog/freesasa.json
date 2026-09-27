@@ -1,0 +1,23 @@
+{
+  "id": "freesasa",
+  "name": "FreeSASA",
+  "summary": "Command-line calculation of solvent-accessible surface areas from molecular structures.",
+  "tasks": ["solvent-accessible-surface-area", "structure-analysis", "protein-interface-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"]},
+    "automatic": true,
+    "environment": "bio-freesasa",
+    "channel": "conda-forge",
+    "package": "freesasa-c=2.1.2"
+  },
+  "verify": {"argv": ["freesasa", "-h"]},
+  "notes": ["The conda-forge freesasa-c package provides the C library and command-line program; Python bindings are a separate package. Scientific SASA results require explicit atom/radius settings review."],
+  "sources": [
+    {"type": "installation", "url": "https://freesasa.github.io/"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/freesasa-c"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/freesasa-c/2.1.2"},
+    {"type": "paper", "url": "https://doi.org/10.12688/f1000research.7931.1"}
+  ]
+}

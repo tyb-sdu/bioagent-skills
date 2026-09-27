@@ -1,0 +1,24 @@
+{
+  "id": "vmd",
+  "name": "VMD",
+  "aliases": ["Visual Molecular Dynamics"],
+  "summary": "Molecular visualization and trajectory-analysis desktop application.",
+  "tasks": ["molecular-visualization", "structure-visualization", "trajectory-analysis"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the official VMD download and license pages and choose a release for the user's operating system and graphics environment.",
+      "Obtain the platform-specific installer or archive from the maintainer under the user's own account if required; inspect the package before installation.",
+      "Install only to a user-approved location and verify that the graphical application starts. Treat any headless/cluster use as a separate platform-specific configuration."
+    ],
+    "verify_note": "Launch VMD and check its version and graphics initialization. Test trajectory loading only with a user-approved sample."
+  },
+  "verify": {"argv": []},
+  "notes": ["VMD is free of charge but has its own license. GUI and graphics-driver checks cannot be represented by the current automatic CLI installer."],
+  "sources": [
+    {"type": "installation", "url": "https://www.ks.uiuc.edu/Research/vmd/"},
+    {"type": "download", "url": "https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=VMD"}
+  ]
+}

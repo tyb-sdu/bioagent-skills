@@ -6,6 +6,8 @@ on:
     paths:
       - catalog/pdbfixer.json
       - catalog/autodock-vina.json
+      - catalog/freesasa.json
+      - catalog/propka.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -13,6 +15,8 @@ on:
     paths:
       - catalog/pdbfixer.json
       - catalog/autodock-vina.json
+      - catalog/freesasa.json
+      - catalog/propka.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -35,6 +39,11 @@ jobs:
           - {tool: pdbfixer, os: macos-latest}
           - {tool: autodock-vina, os: ubuntu-latest}
           - {tool: autodock-vina, os: macos-latest}
+          - {tool: freesasa, os: ubuntu-latest}
+          - {tool: freesasa, os: macos-latest}
+          - {tool: propka, os: ubuntu-latest}
+          - {tool: propka, os: windows-latest}
+          - {tool: propka, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

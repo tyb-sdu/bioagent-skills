@@ -5,8 +5,9 @@ matching target. It does not mean every architecture or dependency combination
 has been installed successfully.
 
 The [scientific smoke workflow](../.github/workflows/scientific-smoke.yml) tests
-PDBFixer on disposable Linux, Windows, and macOS runners, and AutoDock Vina on
-Linux and macOS runners. It creates the recipe's fresh conda environment,
+PDBFixer on disposable Linux, Windows, and macOS runners, AutoDock Vina and
+FreeSASA on Linux and macOS runners, and PROPKA on Linux, macOS and Windows
+runners. It creates the recipe's fresh conda or Python environment,
 executes its minimal verification, repeats the verification, checks that the
 status/usage handoff recognizes the installed environment and matching receipt,
 and retains the
@@ -33,6 +34,11 @@ change user input structures, or validate scientific predictions. They do not
 test the Windows Vina manual fallback. No test runner environment is distributed
 to users, and no scientific software is installed on the maintainer's computer
 by the workflow.
+
+The local Windows/Python 3.12 PROPKA installation and `python -m propka --help`
+check passed before adding its automatic recipe. The FreeSASA conda-forge
+package release was reviewed for Linux and macOS architectures; this does not
+replace a completed CI installation on each runner.
 
 Top-level versions are pinned, but their dependencies and Miniforge bootstrap
 can change. A receipt records the observed top-level version, command and

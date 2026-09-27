@@ -1,0 +1,22 @@
+{
+  "id": "apbs",
+  "name": "APBS",
+  "summary": "Continuum electrostatics calculations for biomolecular systems.",
+  "tasks": ["biomolecular-electrostatics", "molecular-energy"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the official APBS download instructions and registration request before choosing a local installation route.",
+      "Select the maintainer's platform-specific release archive, then check OS, runtime libraries, archive contents, and any checksum supplied by the maintainer.",
+      "Extract into a user-controlled location and keep the APBS executable and libraries together; do not edit shell startup files or system-wide paths automatically."
+    ],
+    "verify_note": "Use the official installation guide's command-line and example checks in the chosen location; do not submit structures to the optional web server without user approval."
+  },
+  "verify": {"argv": []},
+  "notes": ["The maintainer recommends precompiled binaries and requests user registration. Its web server is an alternative, not a local install."],
+  "sources": [
+    {"type": "installation", "url": "https://apbs.readthedocs.io/en/latest/getting/index.html"}
+  ]
+}

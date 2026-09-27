@@ -1,0 +1,24 @@
+{
+  "id": "propka",
+  "name": "PROPKA",
+  "aliases": ["PROPKA 3", "propka3"],
+  "summary": "Structure-based pKa prediction for ionizable groups in proteins and protein-ligand complexes.",
+  "tasks": ["protein-pka-prediction", "protein-protonation", "structure-preparation"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64", "ppc64le"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64", "aarch64"]},
+    "automatic": true,
+    "environment": "bio-propka",
+    "package": "propka==3.5.1",
+    "min_python": "3.10",
+    "python_versions": ["3.10", "3.11", "3.12", "3.13", "3.14"]
+  },
+  "verify": {"argv": ["python", "-m", "propka", "--help"]},
+  "notes": ["The pinned release is a pure-Python wheel. A Windows/Python 3.12 smoke test passed; the CI matrix checks additional OSes. The installed propka3 CLI can also be invoked from the isolated environment."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/jensengroup/propka/blob/master/README.md"},
+    {"type": "package-release", "url": "https://pypi.org/project/propka/3.5.1/"},
+    {"type": "paper", "url": "https://doi.org/10.1021/ct100578z"}
+  ]
+}

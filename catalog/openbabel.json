@@ -1,0 +1,23 @@
+{
+  "id": "openbabel",
+  "name": "Open Babel",
+  "aliases": ["obabel"],
+  "summary": "Chemical file-format conversion and molecular preparation toolkit.",
+  "tasks": ["molecule-preparation", "ligand-preparation", "chemical-format-conversion"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the official installation guide and choose the current maintained binary or package-manager route for the user's operating system.",
+      "Review the release provenance and installation target before applying a Windows installer, Linux distribution package or macOS package; avoid changing system PATH without explicit approval.",
+      "Check the obabel CLI in the selected environment and separately validate any required file-format plugins and Python bindings."
+    ],
+    "verify_note": "Run obabel -V or the maintainer's documented help command, then test a tiny format conversion separately."
+  },
+  "verify": {"argv": []},
+  "notes": ["The official binary instructions vary by platform. Python bindings and plugins are not guaranteed by the CLI installation."],
+  "sources": [
+    {"type": "installation", "url": "https://openbabel.org/docs/Installation/install.html"}
+  ]
+}

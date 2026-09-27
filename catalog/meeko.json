@@ -1,0 +1,23 @@
+{
+  "id": "meeko",
+  "name": "Meeko",
+  "summary": "Ligand and receptor parameterization for AutoDock docking workflows.",
+  "tasks": ["ligand-preparation", "receptor-preparation", "docking-input-preparation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer's installation and CLI documentation; choose a new isolated conda environment for Meeko and its chemistry dependencies.",
+      "Review the current conda-forge package and dependency solver output before installation; do not substitute an unreviewed package version or add global channels.",
+      "Check mk_prepare_ligand.py and mk_prepare_receptor.py help in the isolated environment. Choose protonation, atom types and receptor flexibility for each scientific case separately."
+    ],
+    "verify_note": "Run the maintainer-documented preparation CLI help commands without processing research structures."
+  },
+  "verify": {"argv": []},
+  "notes": ["Meeko prepares docking inputs and processes outputs; it is not the docking engine itself. The maintainer also documents a PyPI route."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/forlilab/Meeko#installation"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/meeko"}
+  ]
+}

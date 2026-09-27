@@ -26,15 +26,15 @@ privacy settings. No software is installed merely by sending a natural-language
 request, and noninteractive `--apply` is disabled.
 
 Automatic installation is intentionally narrower than task recognition. As of
-this release, 7 reviewed conda/PyPI recipes can be applied to fresh isolated
-environments on their reviewed targets; the other 15 are guidance-only because of weights, licenses,
+this release, 9 reviewed conda/PyPI recipes can be applied to fresh isolated
+environments on their reviewed targets; the other 22 are guidance-only because of weights, licenses,
 platform artifacts, or unverified dependency resolution. A successful import
 or `--help` is an installation smoke test, not evidence that scientific results
 are valid. The local model's classification may be wrong, so users must inspect
 the displayed plan and sources before confirming an install.
 
 This is a minimal single-turn terminal agent, not a packaged desktop app or a
-general computer-use agent. The two CLI commands, 22 recipes, and 10 Skills are
+general computer-use agent. The two CLI commands, 31 recipes, and 10 Skills are
 installable as a Python wheel. `bioagent skills export --to <path>/skills`
 previews copying Skills to a user-chosen discovery path; `--apply` performs the
 copy and refuses any name collision. Wheel installation does not automatically

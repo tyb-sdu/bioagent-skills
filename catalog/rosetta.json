@@ -1,0 +1,23 @@
+{
+  "id": "rosetta",
+  "name": "Rosetta",
+  "summary": "Macromolecular structure modeling and design suite.",
+  "tasks": ["protein-design", "protein-interface-design", "protein-protein-docking", "protein-nucleic-acid-design", "protein-complex-modeling"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Review Rosetta Commons' current tool-specific license and permitted use with the user; commercial use can require a paid license.",
+      "Obtain the official release binary or source through the user's own authorized route. Select the supported operating system, compiler and architecture before building.",
+      "Follow the official build documentation in a user-controlled directory, then check the selected Rosetta application and required database path without launching a research job."
+    ],
+    "verify_note": "Follow Rosetta's official build and application checks for the selected release. Do not infer scientific validity from a successful executable launch."
+  },
+  "verify": {"argv": []},
+  "notes": ["Native Windows builds are not recommended in the maintainer's build guide; this recipe reviews Linux and macOS only. Do not redistribute Rosetta binaries or databases."],
+  "sources": [
+    {"type": "installation", "url": "https://docs.rosettacommons.org/docs/latest/build_documentation/Build-Documentation"},
+    {"type": "terms", "url": "https://rosettacommons.org/software/download/"}
+  ]
+}

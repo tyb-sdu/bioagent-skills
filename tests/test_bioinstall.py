@@ -61,15 +61,15 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 22)
+        self.assertGreaterEqual(len(recipes), 31)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 22)
-        self.assertEqual(report["automatic_install_count"], 7)
-        self.assertEqual(report["guidance_only_count"], 15)
+        self.assertEqual(report["software_count"], 31)
+        self.assertEqual(report["automatic_install_count"], 9)
+        self.assertEqual(report["guidance_only_count"], 22)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -82,7 +82,7 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 22)
+        self.assertEqual(report["software_count"], 31)
         run_command.assert_not_called()
 
     def test_task_suggestions_are_read_only_and_include_platform_state(self):
@@ -143,6 +143,19 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(recipe["install"]["package"], "pdbfixer=1.12")
         plan = bioinstall.build_plan(recipe)
         self.assertEqual(plan["commands"][0][-1], "pdbfixer=1.12")
+
+    def test_freesasa_is_linux_macos_only_and_propka_is_pinned_python(self):
+        freesasa = bioinstall.load_recipe("freesasa")
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ):
+            plan = bioinstall.build_plan(freesasa)
+        self.assertFalse(plan["supported_here"])
+        self.assertNotIn("commands", plan)
+        self.assertEqual(freesasa["install"]["package"], "freesasa-c=2.1.2")
+        propka = bioinstall.load_recipe("propka")
+        self.assertEqual(propka["install"]["package"], "propka==3.5.1")
+        self.assertEqual(propka["verify"]["argv"], ["python", "-m", "propka", "--help"])
 
     def test_vina_windows_shows_manual_fallback_but_cannot_auto_apply(self):
         recipe = bioinstall.load_recipe("autodock-vina")

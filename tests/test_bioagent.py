@@ -35,6 +35,14 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertFalse(recipe["install"]["automatic"])
         classify.assert_not_called()
 
+    def test_new_automatic_tool_routes_without_ollama(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("请安装 PROPKA 3", model=None)
+            recipe = bioagent.resolve_intent(intent, "请安装 PROPKA 3")
+        self.assertEqual(recipe["id"], "propka")
+        self.assertTrue(recipe["install"]["automatic"])
+        classify.assert_not_called()
+
     def test_named_tool_takes_precedence_even_if_model_is_configured(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("安装 OpenMM", model="local:1")

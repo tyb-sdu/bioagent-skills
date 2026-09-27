@@ -1,0 +1,23 @@
+{
+  "id": "pyrosetta",
+  "name": "PyRosetta",
+  "summary": "Python interface for Rosetta macromolecular modeling and design.",
+  "tasks": ["protein-design", "protein-interface-design", "protein-complex-modeling", "protein-nucleic-acid-design"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the PyRosetta-specific license and installation route, which are distinct from the core Rosetta distribution; obtain access under the user's own account.",
+      "Choose the release matching the user's OS, architecture and Python version; review its download size and dependencies before creating a fresh environment.",
+      "Follow the official PyRosetta installation guide, then perform its documented import check without running a modeling workflow."
+    ],
+    "verify_note": "Use the official import or initialization check for the selected PyRosetta release in the isolated environment."
+  },
+  "verify": {"argv": []},
+  "notes": ["Non-commercial and commercial users have different terms. Platform and Python-version availability must be checked for the selected release; this recipe does not assume a public PyPI wheel."],
+  "sources": [
+    {"type": "installation", "url": "https://rosettacommons.org/software/download/"},
+    {"type": "documentation", "url": "https://www.pyrosetta.org/"}
+  ]
+}
