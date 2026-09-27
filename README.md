@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina（后者限 Linux/macOS） |
 | PyPI 包安装到独立虚拟环境 | 可预览、可执行、可验收 | MDAnalysis |
-| 官方二进制、容器、源码、权重、受限软件及尚未锁定版本的包 | 资料核对与安装引导 | GNINA、PLIP、Boltz-2、AlphaFold 3、ProteinMPNN、LigandMPNN、RFdiffusion、HADDOCK3、LightDock、DiffDock、OpenFE；另有 AutoDock Vina 的 Windows 手动方案 |
+| 官方二进制、容器、源码、权重、受限软件及尚未锁定版本的包 | 资料核对与安装引导 | GNINA、PLIP、Boltz-2、AlphaFold 2/3、LocalColabFold、ProteinMPNN、LigandMPNN、RFdiffusion、HADDOCK3、LightDock、DiffDock、OpenFE、NAMD、AmberTools；另有 AutoDock Vina 的 Windows 手动方案 |
 
 引导流程尚未提供一键安装。它们需要进一步锁定平台专用发布文件、镜像摘要、模型文件或许可条件。`plan` 不会改变电脑；`install` 默认也只预览，只有加 `--apply` 才会执行自动安装。脚本不会安装驱动、修改系统 Python、改动 conda 的全局配置、运行 `curl | sh`、安装受限权重或删除已有环境。
 
@@ -32,7 +32,7 @@ python -m venv .venv
 .\.venv\Scripts\bioagent.exe --help
 ```
 
-Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、18 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、22 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
 
 要把 Skill 放进另一个支持 Agent Skills 的项目，先查明该智能体的 Skill 发现目录，再显式导出。例如在 Windows PowerShell 中：
 
@@ -47,6 +47,7 @@ Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、18 个配�
 ```bash
 python scripts/bioinstall.py doctor
 python scripts/bioinstall.py list
+python scripts/bioinstall.py coverage
 python scripts/bioinstall.py tasks
 python scripts/bioinstall.py suggest protein-nucleic-acid-docking
 python scripts/bioinstall.py plan openmm
@@ -56,6 +57,8 @@ python scripts/bioinstall.py verify openmm
 python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
+
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、22 款软件配方**，其中 7 款具有自动安装路径，15 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。
 
 `plan` 和 `suggest` 的 `supported_here` 对自动配方检查当前操作系统、处理器架构和已知 Python 版本；引导型配方仅检查已列出的操作系统。`ready_here` 还要求本机已有安装前提（例如 conda），具体障碍见 `blocking_reasons`。不支持的自动安装目标不会展示可执行命令；某些配方会显示只提供步骤的 `manual_fallback`。这些状态不是依赖求解或安装成功的保证。`install --apply` 将软件装入全新的独立环境，随后运行配方中的基础验收命令。成功时，会在当前用户的 `~/.bioagent-skills/receipts/` 写入安装记录。已有环境不会被脚本清理或覆盖。验收仅证明程序可被调用，不证明科研结果的正确性。
 

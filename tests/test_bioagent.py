@@ -27,6 +27,14 @@ class TerminalAgentTests(unittest.TestCase):
         self.assertEqual(recipe["id"], "autodock-vina")
         classify.assert_not_called()
 
+    def test_new_guidance_only_tool_routes_without_ollama(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            intent = bioagent.route_request("请安装 AlphaFold-Multimer", model=None)
+            recipe = bioagent.resolve_intent(intent, "请安装 AlphaFold-Multimer")
+        self.assertEqual(recipe["id"], "alphafold2")
+        self.assertFalse(recipe["install"]["automatic"])
+        classify.assert_not_called()
+
     def test_named_tool_takes_precedence_even_if_model_is_configured(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("安装 OpenMM", model="local:1")

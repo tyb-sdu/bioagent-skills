@@ -1,0 +1,24 @@
+{
+  "id": "alphafold2",
+  "name": "AlphaFold 2",
+  "aliases": ["AlphaFold2", "AlphaFold-Multimer"],
+  "summary": "Protein structure prediction with an optional multimer pipeline.",
+  "tasks": ["protein-structure-prediction", "protein-complex-modeling"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux"],
+    "automatic": false,
+    "steps": [
+      "Read the official AlphaFold v2 README and decide whether the monomer or AlphaFold-Multimer pipeline is required.",
+      "Before downloading, check Linux, Docker, NVIDIA GPU/container support, and storage for genetic databases and model parameters; the full database download is very large.",
+      "Follow the maintainer's Docker and data setup instructions in user-controlled locations. Do not bundle or mirror databases or model parameters in this repository."
+    ],
+    "verify_note": "Use the official Docker GPU check and image build instructions; run a small official example only with the user's approval for data and compute use."
+  },
+  "verify": {"argv": []},
+  "notes": ["AlphaFold 2 is a separate workflow from AlphaFold 3. Its official full-database route is not a lightweight one-click install."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/google-deepmind/alphafold/blob/main/README.md"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41586-021-03819-2"}
+  ]
+}

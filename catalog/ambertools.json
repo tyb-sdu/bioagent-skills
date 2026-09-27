@@ -1,0 +1,23 @@
+{
+  "id": "ambertools",
+  "name": "AmberTools",
+  "summary": "Free molecular simulation preparation and analysis toolkit; distinct from licensed Amber.",
+  "tasks": ["molecular-dynamics", "structure-preparation", "trajectory-analysis", "ligand-preparation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Read the official AmberTools download page and distinguish free AmberTools from separately licensed Amber.",
+      "Choose either the maintainer's conda-forge AmberTools package in a new environment or the documented source build; review the current version, OS/architecture and compute-feature limits first.",
+      "For the conda route, use an isolated environment and follow the maintainer's AmberTools activation instructions; do not modify global conda channel settings on behalf of the user."
+    ],
+    "verify_note": "Follow the official manual's basic installation checks in the selected environment; preparation, analysis and simulation tests are separate."
+  },
+  "verify": {"argv": []},
+  "notes": ["The official conda-forge route does not provide the same CPU-parallel/GPU capabilities as other AmberTools distributions. This recipe remains guidance-only until a pinned build and smoke test are reviewed."],
+  "sources": [
+    {"type": "installation", "url": "https://ambermd.org/GetAmber.php"},
+    {"type": "package", "url": "https://anaconda.org/conda-forge/ambertools"}
+  ]
+}

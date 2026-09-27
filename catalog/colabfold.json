@@ -1,0 +1,24 @@
+{
+  "id": "colabfold",
+  "name": "LocalColabFold",
+  "aliases": ["ColabFold", "Local ColabFold"],
+  "summary": "Local protein and complex structure prediction using the ColabFold workflow.",
+  "tasks": ["protein-structure-prediction", "protein-complex-modeling"],
+  "install": {
+    "kind": "model-data",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Use the LocalColabFold maintainer instructions for the current platform; Windows users first need WSL2.",
+      "Review the selected installer and its dependencies before running it. Check GPU drivers, expected model-weight downloads, disk space, and the user's chosen isolated location.",
+      "Ask whether sequence/MSA work may use an external server. For fully local processing, follow the documented local database and colabfold_search route instead."
+    ],
+    "verify_note": "Run colabfold_batch --help in the installed environment before any prediction; test inference and MSA routing separately with user-approved inputs."
+  },
+  "verify": {"argv": []},
+  "notes": ["Local inference does not by itself guarantee local-only MSA processing. The official local database option adds substantial downloads and setup."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/YoshitakaMo/localcolabfold/blob/main/README.md"},
+    {"type": "repository", "url": "https://github.com/sokrypton/ColabFold"}
+  ]
+}

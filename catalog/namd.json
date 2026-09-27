@@ -1,0 +1,23 @@
+{
+  "id": "namd",
+  "name": "NAMD",
+  "summary": "Molecular dynamics engine for large biomolecular systems.",
+  "tasks": ["molecular-dynamics", "protein-simulation", "membrane-simulation"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the current official NAMD download page and non-commercial license; the user must register or log in to obtain official archives.",
+      "Choose the official archive for the exact OS, architecture, CPU/GPU and network setup. Windows users may also choose WSL for recent Linux builds.",
+      "Download under the user's own account, inspect the archive and maintainer instructions, then extract to a user-controlled directory without changing system-wide paths."
+    ],
+    "verify_note": "Run the executable's documented startup or version check from the selected archive; conduct a small tutorial simulation only as a separate scientific test."
+  },
+  "verify": {"argv": []},
+  "notes": ["Registration and license acceptance cannot be delegated to this installer; commercial use requires separate terms. Do not redistribute official archives."],
+  "sources": [
+    {"type": "installation", "url": "https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD"},
+    {"type": "terms", "url": "https://www.ks.uiuc.edu/Research/namd/3.0.2/ug/node1.html"}
+  ]
+}

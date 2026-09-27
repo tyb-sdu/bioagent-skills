@@ -23,6 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = resources.files("bioagent_skills.catalog") if __package__ == "bioagent_skills" else ROOT / "catalog"
+SKILL_DOCS = resources.files("bioagent_skills.skill_docs") if __package__ == "bioagent_skills" else ROOT / ".agents" / "skills"
 INSTALL_ROOT = Path.home() / ".bioagent-skills"
 ID_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 PACKAGE_PATTERN = re.compile(r"^[A-Za-z0-9_.+\[\],=<>!~-]+$")
@@ -217,6 +218,27 @@ def all_recipes() -> list[dict]:
 
 def all_tasks() -> list[str]:
     return sorted({task for recipe in all_recipes() for task in recipe["tasks"]})
+
+
+def coverage_report() -> dict:
+    """Count reviewed catalog entries and bundled workflows without probing this host."""
+    recipes = all_recipes()
+    automatic = sorted(recipe["id"] for recipe in recipes if recipe["install"]["automatic"])
+    guidance = sorted(recipe["id"] for recipe in recipes if not recipe["install"]["automatic"])
+    skill_count = sum(
+        child.is_dir() and child.joinpath("SKILL.md").is_file()
+        for child in SKILL_DOCS.iterdir()
+    )
+    return {
+        "skill_count": skill_count,
+        "software_count": len(recipes),
+        "automatic_install_count": len(automatic),
+        "guidance_only_count": len(guidance),
+        "task_count": len({task for recipe in recipes for task in recipe["tasks"]}),
+        "automatic_install_ids": automatic,
+        "guidance_only_ids": guidance,
+        "note": "Coverage means a reviewed recipe exists; guidance-only entries cannot be installed automatically. Automatic installation still depends on the reviewed platform and local prerequisites.",
+    }
 
 
 def suggest_recipes(task: str) -> dict:
@@ -506,6 +528,7 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list", help="List curated software recipes")
     sub.add_parser("tasks", help="List reviewed research-task IDs")
+    sub.add_parser("coverage", help="Count reviewed software and automatic versus guidance-only routes")
     sub.add_parser("validate", help="Validate all catalog entries")
     sub.add_parser("doctor", help="Inspect local prerequisites without changing them")
     suggestion = sub.add_parser("suggest", help="Show read-only candidates for a reviewed task ID")
@@ -528,6 +551,8 @@ def main() -> int:
         elif args.command == "tasks":
             for task in all_tasks():
                 print(task)
+        elif args.command == "coverage":
+            print(json.dumps(coverage_report(), ensure_ascii=False, indent=2))
         elif args.command == "suggest":
             print(json.dumps(suggest_recipes(args.task_id), ensure_ascii=False, indent=2))
         elif args.command == "validate":
