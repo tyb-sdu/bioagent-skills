@@ -62,14 +62,17 @@ uses only synthetic coordinates/peptide geometry and does not test folding,
 docking, structural accuracy, or user-supplied inputs. The runner architecture
 and interpreter still delimit this observation.
 
-ProDy adds Linux and macOS x86_64 jobs after the 67-job run. Its first
-macOS job failed at the install prerequisite check because `macos-latest` now
-selects an arm64 runner, while the reviewed ProDy 2.6.1 conda build is x86_64
-only. The job now targets GitHub's `macos-15-intel` runner explicitly; that
-route requires a fresh successful run before it counts as tested. Its minimal check
-builds a Gaussian network model from synthetic coordinates and calculates one
-mode; it does not validate biological dynamics. US-align, TM-align and MODELLER
-remain guidance-only, and no license key is used by the workflow.
+On 2026-09-28, [the 69-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36368365534)
+completed successfully on commit `4864e5e`. All 25 automatic recipes passed
+every declared operating-system route. ProDy passed on Linux x86_64 and on
+GitHub's explicit `macos-15-intel` x86_64 runner. The first ProDy macOS job
+had failed at the installer prerequisite check because `macos-latest` now
+selects arm64, whereas the reviewed ProDy 2.6.1 conda build is x86_64 only.
+The successful rerun verifies the Intel route, not macOS arm64 or native
+Windows. ProDy's minimal check builds a Gaussian network model from synthetic
+coordinates and calculates one mode; it does not validate biological
+dynamics. US-align, TM-align and MODELLER remain guidance-only, and no license
+key is used by the workflow.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the
