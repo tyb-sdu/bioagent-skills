@@ -54,9 +54,13 @@ passed with the new wheel-only installation policy. These jobs use CPython
 3.12 and do not establish coverage of every declared Python version or CPU
 architecture. RNAstructure remains guidance-only with no automatic job.
 
-Biotite and PeptideBuilder add six configured jobs after the 61-job run. Their
-verification uses only synthetic coordinates/peptide geometry and does not
-test folding, docking, structural accuracy, or user-supplied inputs.
+On 2026-09-28, [the 67-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36366108551)
+completed successfully on commit `0cf040a`. All 24 automatic recipes passed
+every declared operating-system route in that run. Biotite 1.7.1 and
+PeptideBuilder 1.1.0 passed on Linux, Windows and macOS. Their verification
+uses only synthetic coordinates/peptide geometry and does not test folding,
+docking, structural accuracy, or user-supplied inputs. The runner architecture
+and interpreter still delimit this observation.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the

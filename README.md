@@ -58,7 +58,7 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、56 款软件配方、72 类任务标签**，其中 24 款具有自动安装路径，32 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。此前 22 款自动配方的全部已声明操作系统路线在 [61 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36332851248)中通过；新增 Biotite、PeptideBuilder 的平台路线另行测试。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、56 款软件配方、72 类任务标签**，其中 24 款具有自动安装路径，32 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。24 款自动配方的全部已声明操作系统路线在 [67 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36366108551)中通过，包含 Biotite、PeptideBuilder 的 Linux、Windows、macOS 路线。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
 
 Biotite 用于结构坐标分析与叠合，PeptideBuilder 按指定几何参数生成肽链；二者都不是蛋白质天然结构预测或蛋白-肽对接引擎。
 
