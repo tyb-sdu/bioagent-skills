@@ -1,0 +1,24 @@
+{
+  "id": "pdb-tools",
+  "name": "pdb-tools",
+  "summary": "Stream-based editing, filtering and renumbering of legacy PDB coordinate files.",
+  "tasks": ["pdb-structure-editing", "structure-preparation", "structure-analysis"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-pdb-tools",
+    "package": "pdb-tools==2.7.0",
+    "min_python": "3.10",
+    "python_versions": ["3.10", "3.11", "3.12", "3.13", "3.14"]
+  },
+  "verify": {"argv": ["python", "-c", "from importlib.metadata import version; from pdbtools.pdb_selchain import run; a='ATOM  '+' '*15+'A'+' '*30+'\\n'; b='ATOM  '+' '*15+'B'+' '*30+'\\n'; out=list(run([a,b], {'A'})); assert out==[a], out; assert version('pdb-tools')=='2.7.0'; print('pdb-tools chain selection OK')"]},
+  "notes": ["The verification filters two synthetic PDB-format lines locally; it does not download a structure or alter research files.", "pdb-tools operates on legacy PDB records. Its mmCIF converters have PDB-format atom/residue limits; use a dedicated mmCIF library such as Gemmi for large structures. This is not a geometry optimization or structure-prediction engine.", "The pinned release publishes a universal Python wheel with no declared dependencies. Only the listed host architectures and Python versions are reviewed here."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/haddocking/pdb-tools"},
+    {"type": "package-release", "url": "https://pypi.org/project/pdb-tools/2.7.0/"},
+    {"type": "usage", "url": "https://github.com/haddocking/pdb-tools/blob/master/pdbtools/pdb_selchain.py"},
+    {"type": "paper", "url": "https://doi.org/10.12688/f1000research.17456.1"}
+  ]
+}

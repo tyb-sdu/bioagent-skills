@@ -29,6 +29,7 @@ on:
       - catalog/biotite.json
       - catalog/peptidebuilder.json
       - catalog/prody.json
+      - catalog/pdb-tools.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -59,6 +60,7 @@ on:
       - catalog/biotite.json
       - catalog/peptidebuilder.json
       - catalog/prody.json
+      - catalog/pdb-tools.json
       - scripts/bioinstall.py
       - tests/check_installed_handoff.py
       - .github/workflows/scientific-smoke.yml
@@ -145,6 +147,9 @@ jobs:
           - {tool: peptidebuilder, os: macos-latest}
           - {tool: prody, os: ubuntu-latest}
           - {tool: prody, os: macos-15-intel}
+          - {tool: pdb-tools, os: ubuntu-latest}
+          - {tool: pdb-tools, os: windows-latest}
+          - {tool: pdb-tools, os: macos-latest}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

@@ -1,0 +1,26 @@
+{
+  "id": "phenix",
+  "name": "Phenix",
+  "summary": "Macromolecular crystallography and cryo-EM atomic-model building, refinement and validation suite.",
+  "tasks": ["cryo-em-model-building", "cryo-em-model-refinement", "cryo-em-structure-analysis", "crystallographic-structure-analysis"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Review the current Phenix download and license pages. Non-profit users must request their own academic download password and accept the terms; for-profit work follows the maintainer's industrial access route. Do not put credentials or installer files in this repository.",
+      "Have the user select the official release installer for their actual OS and CPU. Follow the platform-specific graphical or command-line setup guide in a user-controlled directory. Do not bypass operating-system security prompts or run the installer without user review.",
+      "After installation, use the Phenix-provided command prompt or source phenix_env.sh on Linux/macOS. Check that the installed Phenix version and the phenix.real_space_refine help are accessible. A GUI launch may also be checked interactively.",
+      "For cryo-EM, distinguish atomic-model refinement against a map from particle reconstruction. Run a real refinement only with user-approved map/model data and scientific parameters."
+    ],
+    "verify_note": "Check the installed version and phenix.real_space_refine help in the official Phenix environment. An actual model-versus-map refinement and result validation are separate scientific checks."
+  },
+  "verify": {"argv": []},
+  "notes": ["Phenix is available without cost for non-profit work under its terms, but download access is user-specific; for-profit access differs. This catalog does not download or redistribute the suite.", "Phenix real-space refinement is for an atomic model against a cryo-EM map; phenix.refine is a crystallographic reciprocal-space workflow. Neither installation nor help output proves model quality."],
+  "sources": [
+    {"type": "installation", "url": "https://phenix-online.org/documentation/install-setup-run.html"},
+    {"type": "download", "url": "https://phenix-online.org/download"},
+    {"type": "license", "url": "https://phenix-online.org/license"},
+    {"type": "usage", "url": "https://phenix-online.org/documentation/overviews/cryo-em-real-space-refinement.html"}
+  ]
+}

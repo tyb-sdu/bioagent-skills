@@ -75,16 +75,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 60)
+        self.assertGreaterEqual(len(recipes), 63)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 60)
-        self.assertEqual(report["automatic_install_count"], 25)
-        self.assertEqual(report["guidance_only_count"], 35)
-        self.assertEqual(report["task_count"], 77)
+        self.assertEqual(report["software_count"], 63)
+        self.assertEqual(report["automatic_install_count"], 26)
+        self.assertEqual(report["guidance_only_count"], 37)
+        self.assertEqual(report["task_count"], 79)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -105,6 +105,9 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("biotite", report["automatic_install_ids"])
         self.assertIn("peptidebuilder", report["automatic_install_ids"])
         self.assertIn("prody", report["automatic_install_ids"])
+        self.assertIn("pdb-tools", report["automatic_install_ids"])
+        for tool_id in ("coot", "phenix"):
+            self.assertIn(tool_id, report["guidance_only_ids"])
         for tool_id in ("usalign", "tmalign", "modeller"):
             self.assertIn(tool_id, report["guidance_only_ids"])
 
@@ -114,7 +117,24 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 60)
+        self.assertEqual(report["software_count"], 63)
+
+    def test_pdb_tools_route_is_pinned_and_checks_local_chain_selection(self):
+        recipe = bioinstall.load_recipe("pdb-tools")
+        self.assertEqual(recipe["install"]["package"], "pdb-tools==2.7.0")
+        self.assertEqual(set(recipe["install"]["platforms"]), {"linux", "macos", "windows"})
+        self.assertIn("pdb_selchain", recipe["verify"]["argv"][-1])
+        self.assertNotIn("https://", recipe["verify"]["argv"][-1])
+
+    def test_graphical_model_building_and_restricted_refinement_are_guidance_only(self):
+        for tool_id in ("coot", "phenix"):
+            recipe = bioinstall.load_recipe(tool_id)
+            self.assertFalse(recipe["install"]["automatic"])
+            with patch.object(bioinstall, "run") as command, contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(bioinstall.RecipeError):
+                    bioinstall.install_recipe(recipe, apply=True)
+            command.assert_not_called()
+        self.assertEqual(bioinstall.load_recipe("phenix")["install"]["kind"], "restricted")
 
     def test_prody_route_is_limited_to_reviewed_conda_platforms(self):
         recipe = bioinstall.load_recipe("prody")

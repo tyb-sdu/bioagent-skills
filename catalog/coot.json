@@ -1,0 +1,24 @@
+{
+  "id": "coot",
+  "name": "Coot",
+  "summary": "Interactive macromolecular atomic-model building, map inspection, refinement and validation.",
+  "tasks": ["cryo-em-model-building", "cryo-em-model-refinement", "cryo-em-structure-analysis", "crystallographic-structure-analysis", "molecular-visualization"],
+  "install": {
+    "kind": "binary",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer's current installation section and select a route for the actual OS: Flatpak or distribution packaging on Linux, documented Homebrew formula on macOS, or the linked WinCoot installer on Windows. Coot may also be available through the separately installed CCP4 suite.",
+      "Review the selected package source, version, license and platform requirements before installing. Do not add an unstable system repository or execute a remote build script automatically; use any such route only after explicit user review.",
+      "Launch Coot interactively on a machine with a working graphical display. Confirm its version and that the GUI opens; inspect a user-approved model/map only when the user wants a scientific workflow."
+    ],
+    "verify_note": "Check the installed version and successful local GUI launch. Headless command output does not verify graphics-dependent model-building features."
+  },
+  "verify": {"argv": []},
+  "notes": ["Coot is a GUI model-building and validation tool, not a cryo-EM image reconstruction engine. Its packaging routes differ by OS and may involve system-wide changes, so this recipe is guidance-only.", "Do not treat the repository's MIT license as changing Coot's own GPL/LGPL terms."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/pemsley/coot"},
+    {"type": "license", "url": "https://github.com/pemsley/coot/blob/main/coot.appdata.xml"},
+    {"type": "paper", "url": "https://doi.org/10.1107/S0907444910007493"}
+  ]
+}

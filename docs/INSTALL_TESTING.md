@@ -74,6 +74,12 @@ coordinates and calculates one mode; it does not validate biological
 dynamics. US-align, TM-align and MODELLER remain guidance-only, and no license
 key is used by the workflow.
 
+The new pdb-tools 2.7.0 route has Linux, Windows and macOS smoke jobs. Until a
+new workflow run completes, those three installations are configured but not
+verified by CI. Its local check selects one chain from two synthetic PDB lines;
+it does not establish the correctness of edited experimental structures or
+large mmCIF conversions. Phenix and Coot remain guidance-only.
+
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the
 native `Scripts/conda.exe`. The installer now resolves that executable from the

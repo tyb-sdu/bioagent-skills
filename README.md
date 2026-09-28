@@ -9,7 +9,7 @@
 | 流程 | 状态 | 首批软件 |
 | --- | --- | --- |
 | conda-forge 包安装到独立环境 | 可预览、可执行、可验收 | OpenMM、RDKit、GROMACS、Psi4、PDBFixer、AutoDock Vina、FreeSASA、Open Babel、Meeko、MDTraj、ParmEd、Gemmi、ProLIF、OpenMMForceFields、APBS（Vina、FreeSASA、OpenMMForceFields 限 Linux/macOS） |
-| PyPI 包安装到独立虚拟环境 | 可预览、可执行、可验收 | MDAnalysis、PROPKA、PDB2PQR |
+| PyPI 包安装到独立虚拟环境 | 可预览、可执行、可验收 | MDAnalysis、PROPKA、PDB2PQR、pdb-tools |
 | 官方二进制、容器、源码、权重、受限软件及尚未锁定版本的包 | 资料核对与安装引导 | AlphaFold、RoseTTAFold3、RFdiffusion3、NUPACK、oxDNA、RELION、CryoSPARC、ModelAngelo、ChimeraX 等；完整清单见[覆盖矩阵](docs/COVERAGE.md) |
 
 引导流程尚未提供一键安装。它们需要进一步锁定平台专用发布文件、镜像摘要、模型文件或许可条件。`plan` 不会改变电脑；`install` 默认也只预览，只有加 `--apply` 才会执行自动安装。脚本不会安装驱动、修改系统 Python、改动 conda 的全局配置、运行 `curl | sh`、安装受限权重或删除已有环境。
@@ -32,7 +32,7 @@ python -m venv .venv
 .\.venv\Scripts\bioagent.exe --help
 ```
 
-Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、60 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
+Linux/macOS 将 `.venv\Scripts\` 换成 `.venv/bin/`。终端命令、63 个配方和 10 个 Skill 会进入虚拟环境，不依赖运行时所在目录；安装 Python 包**不会自动把 Skill 注册到其他智能体**。不安装 Python 包也可以直接运行下面的 `python scripts/...` 命令。
 
 要把 Skill 放进另一个支持 Agent Skills 的项目，先查明该智能体的 Skill 发现目录，再显式导出。例如在 Windows PowerShell 中：
 
@@ -58,7 +58,9 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、60 款软件配方、77 类任务标签**，其中 25 款具有自动安装路径，35 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。25 款自动配方的全部已声明操作系统路线在 [69 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36368365534)中通过；ProDy 的 macOS 路线使用 Intel x86_64 运行器，原生 Windows 不在自动范围内。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、63 款软件配方、79 类任务标签**，其中 26 款具有自动安装路径，37 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。此前 25 款自动配方的全部已声明操作系统路线在 [69 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36368365534)中通过；本次新增的 pdb-tools 三平台路线尚需新的 CI 实际安装确认。ProDy 的 macOS 路线使用 Intel x86_64 运行器，原生 Windows 不在自动范围内。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+
+新增 pdb-tools 的本机 PDB 文件编辑自动路线，以及 Phenix、Coot 的冷冻电镜模型构建/修整引导。Phenix 的下载权限和许可由用户自行办理；Coot 的 GUI 和平台包需在目标机检查。两者都不会由 `install --apply` 自动执行。
 
 新增 ProDy 的局部结构动力学分析自动路线，以及 US-align、TM-align、MODELLER 的安装引导。MODELLER 需用户自行取得适用许可；结构比对软件不等于蛋白结构预测器。
 
