@@ -1,0 +1,29 @@
+{
+  "id": "peptidebuilder",
+  "name": "PeptideBuilder",
+  "summary": "Construct short peptide coordinate models from explicitly chosen residue identities and backbone geometry.",
+  "tasks": ["peptide-backbone-building", "structure-preparation", "protein-peptide-docking"],
+  "install": {
+    "kind": "python",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-peptidebuilder",
+    "package": "PeptideBuilder==1.1.0",
+    "min_python": "3.10",
+    "python_versions": ["3.10", "3.11", "3.12", "3.13"]
+  },
+  "verify": {"argv": ["python", "-c", "import PeptideBuilder as p; from PeptideBuilder import Geometry; g=Geometry.geometry('G'); s=p.initialize_res(g); p.add_residue(s,g); assert sum(1 for _ in s.get_residues())==2; print('PeptideBuilder geometry OK')"]},
+  "notes": [
+    "This is an MIT-licensed Python library that builds coordinates from user-chosen geometries; it does not predict native peptide folds, rank conformations, dock peptides to proteins or relax a molecular force field. A generated pose requires subsequent scientific review.",
+    "The pinned PeptideBuilder distribution is a universal Python wheel; its Biopython dependency still needs a wheel compatible with the host. The installer is wheel-only and will stop rather than compile if a dependency wheel is missing. The package is small (about 14 KB) before Biopython and NumPy dependencies.",
+    "Verification creates a two-glycine synthetic model entirely offline and does not write a PDB or process user sequences."
+  ],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/clauswilke/PeptideBuilder/blob/master/README.md"},
+    {"type": "usage", "url": "https://github.com/clauswilke/PeptideBuilder/blob/master/examples/simpleExample.py"},
+    {"type": "package-release", "url": "https://pypi.org/pypi/PeptideBuilder/1.1.0/json"},
+    {"type": "license", "url": "https://github.com/clauswilke/PeptideBuilder/blob/master/LICENSE.txt"},
+    {"type": "paper", "url": "https://doi.org/10.7717/peerj.80"}
+  ]
+}

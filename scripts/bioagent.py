@@ -45,6 +45,8 @@ TASK_PHRASES = {
     "trajectory-analysis": ("轨迹分析", "trajectoryanalysis"),
     "quantum-chemistry": ("量子化学", "quantumchemistry"),
     "rna-secondary-structure-prediction": ("rna二级结构预测", "rnasecondarystructureprediction"),
+    "protein-structure-comparison": ("蛋白结构比较", "proteinstructurecomparison"),
+    "peptide-backbone-building": ("多肽骨架建模", "peptidebackbonebuilding"),
 }
 SKILL_ROOT = (
     resources.files("bioagent_skills.skill_docs")

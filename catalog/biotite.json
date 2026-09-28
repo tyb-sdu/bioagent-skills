@@ -1,0 +1,26 @@
+{
+  "id": "biotite",
+  "name": "Biotite",
+  "summary": "Python toolkit for local molecular coordinate analysis and structural superposition.",
+  "tasks": ["structure-analysis", "protein-structure-comparison", "structure-superposition", "crystallographic-structure-analysis"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos", "windows"],
+    "architectures": {"linux": ["x86_64", "aarch64"], "macos": ["x86_64", "aarch64"], "windows": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-biotite",
+    "channel": "conda-forge",
+    "package": "biotite=1.7.1"
+  },
+  "verify": {"argv": ["python", "-c", "import biotite, biotite.structure as s, numpy as np; a=s.AtomArray(4); a.coord=np.array([[0,0,0],[1,0,0],[0,1,0],[0,0,1]], dtype=np.float32); b=a.copy(); b.coord+=np.array([2,3,4]); fitted,_=s.superimpose(a,b); assert s.rmsd(a,fitted)<1e-4; print(biotite.__version__)"]},
+  "notes": [
+    "The conda-forge release has builds for the declared OS and CPU combinations, but the installation smoke matrix tests only hosted runner architectures. The package is a Python toolkit, not a standalone full protein-folding or docking engine.",
+    "The verification superimposes two translated synthetic four-atom coordinate sets entirely offline; it does not validate a user model or scientific method choice. Optional wrappers around external tools, database access and plotting features may need separate software or data."
+  ],
+  "sources": [
+    {"type": "installation", "url": "https://www.biotite-python.org/latest/install.html"},
+    {"type": "usage", "url": "https://www.biotite-python.org/latest/apidoc/biotite.structure.superimpose.html"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/biotite/1.7.1"},
+    {"type": "paper", "url": "https://doi.org/10.1186/s12859-018-2367-z"}
+  ]
+}

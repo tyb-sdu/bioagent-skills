@@ -74,16 +74,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 54)
+        self.assertGreaterEqual(len(recipes), 56)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 54)
-        self.assertEqual(report["automatic_install_count"], 22)
+        self.assertEqual(report["software_count"], 56)
+        self.assertEqual(report["automatic_install_count"], 24)
         self.assertEqual(report["guidance_only_count"], 32)
-        self.assertEqual(report["task_count"], 69)
+        self.assertEqual(report["task_count"], 72)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -101,6 +101,8 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("molprobity", report["guidance_only_ids"])
         self.assertIn("viennarna", report["automatic_install_ids"])
         self.assertIn("rnastructure", report["guidance_only_ids"])
+        self.assertIn("biotite", report["automatic_install_ids"])
+        self.assertIn("peptidebuilder", report["automatic_install_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -108,7 +110,26 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 54)
+        self.assertEqual(report["software_count"], 56)
+
+    def test_biotite_structure_superposition_is_pinned_and_local(self):
+        recipe = bioinstall.load_recipe("biotite")
+        self.assertEqual(recipe["install"]["package"], "biotite=1.7.1")
+        self.assertEqual(set(recipe["install"]["platforms"]), {"linux", "macos", "windows"})
+        self.assertIn("superimpose", recipe["verify"]["argv"][-1])
+        self.assertNotIn("https://", recipe["verify"]["argv"][-1])
+
+    def test_peptidebuilder_is_geometry_builder_not_fold_predictor(self):
+        recipe = bioinstall.load_recipe("peptidebuilder")
+        self.assertEqual(recipe["install"]["package"], "PeptideBuilder==1.1.0")
+        self.assertIn("add_residue", recipe["verify"]["argv"][-1])
+        self.assertNotIn("protein-structure-prediction", recipe["tasks"])
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "current_python_version", return_value=(3, 12)):
+            plan = bioinstall.build_plan(recipe)
+        self.assertTrue(plan["ready_here"])
+        self.assertIn("--only-binary=:all:", plan["commands"][1])
 
     def test_viennarna_python_scope_and_supported_interpreters(self):
         recipe = bioinstall.load_recipe("viennarna")

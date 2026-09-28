@@ -72,6 +72,14 @@ class TerminalAgentTests(unittest.TestCase):
             self.assertEqual(bioagent.mentioned_tools("安装 RNAfold"), [])
         classify.assert_not_called()
 
+    def test_structure_tool_names_and_tasks_route_without_model(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            self.assertEqual(bioagent.route_request("安装 Biotite", None)["tool_id"], "biotite")
+            self.assertEqual(bioagent.route_request("安装 PeptideBuilder", None)["tool_id"], "peptidebuilder")
+            self.assertEqual(bioagent.route_request("蛋白结构比较", None)["task_id"], "protein-structure-comparison")
+            self.assertEqual(bioagent.route_request("多肽骨架建模", None)["task_id"], "peptide-backbone-building")
+        classify.assert_not_called()
+
     def test_binding_pocket_task_is_recognized_without_guessing_a_tool(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("我需要蛋白结合口袋检测软件", None)
