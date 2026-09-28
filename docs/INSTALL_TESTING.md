@@ -74,11 +74,13 @@ coordinates and calculates one mode; it does not validate biological
 dynamics. US-align, TM-align and MODELLER remain guidance-only, and no license
 key is used by the workflow.
 
-The new pdb-tools 2.7.0 route has Linux, Windows and macOS smoke jobs. Until a
-new workflow run completes, those three installations are configured but not
-verified by CI. Its local check selects one chain from two synthetic PDB lines;
-it does not establish the correctness of edited experimental structures or
-large mmCIF conversions. Phenix and Coot remain guidance-only.
+On 2026-09-28, [the 72-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36392762085)
+completed successfully on commit `3c6f24f`. All 26 automatic recipes passed
+every declared operating-system route. The new pdb-tools 2.7.0 route passed
+on Linux, Windows and macOS. Its local check selects one chain from two
+synthetic PDB lines; it does not establish the correctness of edited
+experimental structures or large mmCIF conversions. Phenix and Coot remain
+guidance-only.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the

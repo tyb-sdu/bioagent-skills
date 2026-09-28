@@ -58,7 +58,7 @@ python scripts/bioinstall.py status openmm
 python scripts/bioinstall.py usage openmm
 ```
 
-`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、63 款软件配方、79 类任务标签**，其中 26 款具有自动安装路径，37 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。此前 25 款自动配方的全部已声明操作系统路线在 [69 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36368365534)中通过；本次新增的 pdb-tools 三平台路线尚需新的 CI 实际安装确认。ProDy 的 macOS 路线使用 Intel x86_64 运行器，原生 Windows 不在自动范围内。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
+`coverage` 从实际仓库内容计算数量，当前是 **10 个通用流程 Skill、63 款软件配方、79 类任务标签**，其中 26 款具有自动安装路径，37 款仅有安装引导；不同平台能否自动安装还要看 `plan` 的检查结果。一个 Skill 可以处理多款软件，因此 Skill 数不等于软件数。按科研领域查看全部软件见[覆盖矩阵](docs/COVERAGE.md)。26 款自动配方的全部已声明操作系统路线在 [72 项一次性安装测试](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36392762085)中通过；其中 pdb-tools 在 Linux、Windows、macOS 均通过，ProDy 的 macOS 路线使用 Intel x86_64 运行器，原生 Windows 不在自动范围内。架构、GPU、科学结果及未来依赖变化仍需单独验证，详见[测试边界](docs/INSTALL_TESTING.md)。
 
 新增 pdb-tools 的本机 PDB 文件编辑自动路线，以及 Phenix、Coot 的冷冻电镜模型构建/修整引导。Phenix 的下载权限和许可由用户自行办理；Coot 的 GUI 和平台包需在目标机检查。两者都不会由 `install --apply` 自动执行。
 
