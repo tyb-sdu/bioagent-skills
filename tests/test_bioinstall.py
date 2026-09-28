@@ -18,8 +18,8 @@ SPEC.loader.exec_module(bioinstall)
 class CatalogTests(unittest.TestCase):
     def test_every_automatic_recipe_platform_has_installation_smoke_job(self):
         workflow = (MODULE_PATH.parents[1] / ".github" / "workflows" / "scientific-smoke.yml").read_text(encoding="utf-8")
-        jobs = re.findall(r"^\s*- \{tool: ([a-z0-9-]+), os: (ubuntu|windows|macos)-latest\}$", workflow, re.MULTILINE)
-        configured = {(tool, "linux" if os_name == "ubuntu" else os_name) for tool, os_name in jobs}
+        jobs = re.findall(r"^\s*- \{tool: ([a-z0-9-]+), os: (ubuntu-latest|windows-latest|macos-latest|macos-15-intel)\}$", workflow, re.MULTILINE)
+        configured = {(tool, "linux" if os_name.startswith("ubuntu") else "windows" if os_name.startswith("windows") else "macos") for tool, os_name in jobs}
         automatic = {
             (recipe["id"], platform)
             for recipe in bioinstall.all_recipes()
@@ -27,6 +27,7 @@ class CatalogTests(unittest.TestCase):
             for platform in recipe["install"]["platforms"]
         }
         self.assertEqual(automatic, configured)
+        self.assertIn(("prody", "macos-15-intel"), jobs)
 
     def test_conda_batch_launcher_resolves_sibling_native_executable(self):
         with tempfile.TemporaryDirectory(prefix="bioagent-conda-") as directory:

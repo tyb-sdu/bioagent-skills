@@ -144,7 +144,7 @@ jobs:
           - {tool: peptidebuilder, os: windows-latest}
           - {tool: peptidebuilder, os: macos-latest}
           - {tool: prody, os: ubuntu-latest}
-          - {tool: prody, os: macos-latest}
+          - {tool: prody, os: macos-15-intel}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

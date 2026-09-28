@@ -62,7 +62,11 @@ uses only synthetic coordinates/peptide geometry and does not test folding,
 docking, structural accuracy, or user-supplied inputs. The runner architecture
 and interpreter still delimit this observation.
 
-ProDy adds Linux and macOS x86_64 jobs after the 67-job run. Its minimal check
+ProDy adds Linux and macOS x86_64 jobs after the 67-job run. Its first
+macOS job failed at the install prerequisite check because `macos-latest` now
+selects an arm64 runner, while the reviewed ProDy 2.6.1 conda build is x86_64
+only. The job now targets GitHub's `macos-15-intel` runner explicitly; that
+route requires a fresh successful run before it counts as tested. Its minimal check
 builds a Gaussian network model from synthetic coordinates and calculates one
 mode; it does not validate biological dynamics. US-align, TM-align and MODELLER
 remain guidance-only, and no license key is used by the workflow.
