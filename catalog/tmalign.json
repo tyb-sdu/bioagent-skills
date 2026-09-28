@@ -1,0 +1,24 @@
+{
+  "id": "tmalign",
+  "name": "TM-align",
+  "aliases": ["TMalign"],
+  "summary": "TM-score-based pairwise protein structure alignment.",
+  "tasks": ["protein-structure-comparison", "structure-superposition", "protein-structure-validation"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux", "macos"],
+    "automatic": false,
+    "steps": [
+      "Review the Zhang group's TM-align page, source, available Linux executable and applicable use terms before obtaining files. Distinguish this classic algorithm from the broader US-align program.",
+      "Choose a user-controlled directory and a source/compiler or maintainer-provided executable appropriate for the host. Verify provenance and a pinned digest before running; this repository does not download or execute an unpinned binary.",
+      "Run the local program's help and a small public example pair; interpret TM-score and normalization with the maintainer's documentation."
+    ],
+    "verify_note": "Run the selected local TM-align executable on the maintainer's example structures and inspect its version, alignment and TM-score. No native Windows automatic route is reviewed here."
+  },
+  "verify": {"argv": []},
+  "notes": ["TM-align compares supplied protein coordinates; it does not build a model or perform docking. The guide does not assert that a package-manager version is equivalent to the maintainer's current source."],
+  "sources": [
+    {"type": "installation", "url": "https://zhanggroup.org/TM-align/"},
+    {"type": "paper", "url": "https://doi.org/10.1093/nar/gki524"}
+  ]
+}

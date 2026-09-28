@@ -1,0 +1,25 @@
+{
+  "id": "usalign",
+  "name": "US-align",
+  "aliases": ["USalign"],
+  "summary": "Structure alignment for proteins, nucleic acids and multichain complexes.",
+  "tasks": ["protein-structure-comparison", "structure-superposition", "protein-complex-structure-comparison", "nucleic-acid-structure-comparison"],
+  "install": {
+    "kind": "source",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Read the maintainer's README and LICENSE. Choose the documented source-build, Bioconda or Homebrew route for the user's OS and CPU; current Bioconda instructions cover Linux/macOS, not native Windows.",
+      "If compiling, obtain a reviewed source revision and use the documented compiler for Linux/macOS or MinGW-w64/WSL2 for Windows. Review source and output paths before building; this catalog does not run make or a downloaded script.",
+      "Keep the program in a user-chosen directory, run USalign -h, then compare the maintainer's small example structures. Do not upload confidential structures to an online service."
+    ],
+    "verify_note": "Run USalign -h and a maintainer example pair in the selected local environment. A help message alone does not validate alignment output."
+  },
+  "verify": {"argv": []},
+  "notes": ["US-align includes protein and nucleic-acid monomer/complex comparison. It is a structure-alignment tool, not a structure predictor or docking search engine. Package-manager builds may lag the maintainer source. No source revision or binary digest has been approved for automatic execution."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/pylelab/USalign"},
+    {"type": "license", "url": "https://github.com/pylelab/USalign/blob/master/LICENSE"},
+    {"type": "paper", "url": "https://doi.org/10.1038/s41592-022-01585-1"}
+  ]
+}

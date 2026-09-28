@@ -80,6 +80,12 @@ class TerminalAgentTests(unittest.TestCase):
             self.assertEqual(bioagent.route_request("多肽骨架建模", None)["task_id"], "peptide-backbone-building")
         classify.assert_not_called()
 
+    def test_classic_structure_tools_route_by_exact_name(self):
+        with patch.object(bioagent, "classify_request") as classify:
+            for label, tool_id in (("ProDy", "prody"), ("US-align", "usalign"), ("TM-align", "tmalign"), ("MODELLER", "modeller")):
+                self.assertEqual(bioagent.route_request("安装 " + label, None)["tool_id"], tool_id)
+        classify.assert_not_called()
+
     def test_binding_pocket_task_is_recognized_without_guessing_a_tool(self):
         with patch.object(bioagent, "classify_request") as classify:
             intent = bioagent.route_request("我需要蛋白结合口袋检测软件", None)

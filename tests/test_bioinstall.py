@@ -74,16 +74,16 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid_and_sourced(self):
         recipes = bioinstall.all_recipes()
-        self.assertGreaterEqual(len(recipes), 56)
+        self.assertGreaterEqual(len(recipes), 60)
         for recipe in recipes:
             self.assertTrue(any(source["type"] == "installation" for source in recipe["sources"]))
 
     def test_coverage_report_separates_workflows_from_software_and_routes(self):
         report = bioinstall.coverage_report()
-        self.assertEqual(report["software_count"], 56)
-        self.assertEqual(report["automatic_install_count"], 24)
-        self.assertEqual(report["guidance_only_count"], 32)
-        self.assertEqual(report["task_count"], 72)
+        self.assertEqual(report["software_count"], 60)
+        self.assertEqual(report["automatic_install_count"], 25)
+        self.assertEqual(report["guidance_only_count"], 35)
+        self.assertEqual(report["task_count"], 77)
         self.assertEqual(report["skill_count"], 10)
         self.assertEqual(len(report["automatic_install_ids"]), report["automatic_install_count"])
         self.assertEqual(len(report["guidance_only_ids"]), report["guidance_only_count"])
@@ -103,6 +103,9 @@ class CatalogTests(unittest.TestCase):
         self.assertIn("rnastructure", report["guidance_only_ids"])
         self.assertIn("biotite", report["automatic_install_ids"])
         self.assertIn("peptidebuilder", report["automatic_install_ids"])
+        self.assertIn("prody", report["automatic_install_ids"])
+        for tool_id in ("usalign", "tmalign", "modeller"):
+            self.assertIn(tool_id, report["guidance_only_ids"])
 
     def test_coverage_cli_is_read_only(self):
         with patch.object(bioinstall.sys, "argv", ["bioinstall", "coverage"]), patch.object(
@@ -110,7 +113,32 @@ class CatalogTests(unittest.TestCase):
         ) as run_command, contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(bioinstall.main(), 0)
         report = json.loads(output.getvalue())
-        self.assertEqual(report["software_count"], 56)
+        self.assertEqual(report["software_count"], 60)
+
+    def test_prody_route_is_limited_to_reviewed_conda_platforms(self):
+        recipe = bioinstall.load_recipe("prody")
+        self.assertEqual(recipe["install"]["package"], "prody=2.6.1")
+        self.assertEqual(set(recipe["install"]["platforms"]), {"linux", "macos"})
+        self.assertIn("buildKirchhoff", recipe["verify"]["argv"][-1])
+        with patch.object(bioinstall, "current_platform", return_value="windows"), patch.object(
+            bioinstall, "current_architecture", return_value="x86_64"
+        ), patch.object(bioinstall, "run") as command, contextlib.redirect_stdout(io.StringIO()):
+            plan = bioinstall.build_plan(recipe)
+            with self.assertRaises(bioinstall.RecipeError):
+                bioinstall.install_recipe(recipe, apply=True)
+        self.assertFalse(plan["supported_here"])
+        self.assertTrue(plan["manual_fallback_here"])
+        command.assert_not_called()
+
+    def test_classic_alignment_and_licensed_modeling_are_guidance_only(self):
+        for tool_id in ("usalign", "tmalign", "modeller"):
+            recipe = bioinstall.load_recipe(tool_id)
+            self.assertFalse(recipe["install"]["automatic"])
+            with patch.object(bioinstall, "run") as command, contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises(bioinstall.RecipeError):
+                    bioinstall.install_recipe(recipe, apply=True)
+            command.assert_not_called()
+        self.assertEqual(bioinstall.load_recipe("modeller")["install"]["kind"], "restricted")
 
     def test_biotite_structure_superposition_is_pinned_and_local(self):
         recipe = bioinstall.load_recipe("biotite")

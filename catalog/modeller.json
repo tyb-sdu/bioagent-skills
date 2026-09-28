@@ -1,0 +1,26 @@
+{
+  "id": "modeller",
+  "name": "MODELLER",
+  "summary": "Template-based comparative protein structure modeling with spatial restraints.",
+  "tasks": ["protein-homology-modeling", "protein-structure-prediction", "protein-complex-modeling", "protein-loop-modeling"],
+  "install": {
+    "kind": "restricted",
+    "platforms": ["linux", "macos", "windows"],
+    "automatic": false,
+    "steps": [
+      "Review the maintainer's MODELLER 10.8 download page and license terms. Academic non-profit users must register for their own free license key; government and commercial users need the appropriate licensing route.",
+      "Have the user obtain the official package for the actual OS/CPU (conda, installer, RPM/DEB or tarball as appropriate). Verify a published GPG signature where available. Do not share, embed or commit license keys or redistribute the program.",
+      "Follow the official platform installation guide in a user-controlled environment, enter the license key through the maintainer-supported local mechanism, and keep the key out of logs and agent transcripts.",
+      "Run an official local tutorial example with user-approved template input. Confirm the installed version and license validity without uploading private sequences or claiming model accuracy."
+    ],
+    "verify_note": "Use the selected MODELLER 10.8 installation guide and local tutorial after the user's license is configured. A Python import alone is not enough to prove the license or modeling workflow works."
+  },
+  "verify": {"argv": []},
+  "notes": ["Academic use is free of charge only under the maintainer's terms and requires a user-specific license. This repository neither distributes MODELLER nor stores a license key. Comparative modeling requires an appropriate template and alignment; it is not de novo folding."],
+  "sources": [
+    {"type": "installation", "url": "https://guitar.compbio.ucsf.edu/modeller/download_installation.html"},
+    {"type": "registration", "url": "https://guitar.compbio.ucsf.edu/modeller/registration.html"},
+    {"type": "documentation", "url": "https://salilab.org/modeller/manual/"},
+    {"type": "paper", "url": "https://doi.org/10.1006/jmbi.1993.1626"}
+  ]
+}

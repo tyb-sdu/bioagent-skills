@@ -52,7 +52,7 @@ every declared operating-system route in that run. ViennaRNA 2.7.2's Python
 interface passed on Linux, Windows and macOS; the other Python recipes also
 passed with the new wheel-only installation policy. These jobs use CPython
 3.12 and do not establish coverage of every declared Python version or CPU
-architecture. RNAstructure remains guidance-only with no automatic job.
+ architecture. RNAstructure remains guidance-only with no automatic job.
 
 On 2026-09-28, [the 67-job installation run](https://github.com/tyb-sdu/bioagent-skills/actions/runs/36366108551)
 completed successfully on commit `0cf040a`. All 24 automatic recipes passed
@@ -61,6 +61,11 @@ PeptideBuilder 1.1.0 passed on Linux, Windows and macOS. Their verification
 uses only synthetic coordinates/peptide geometry and does not test folding,
 docking, structural accuracy, or user-supplied inputs. The runner architecture
 and interpreter still delimit this observation.
+
+ProDy adds Linux and macOS x86_64 jobs after the 67-job run. Its minimal check
+builds a Gaussian network model from synthetic coordinates and calculates one
+mode; it does not validate biological dynamics. US-align, TM-align and MODELLER
+remain guidance-only, and no license key is used by the workflow.
 
 The initial Windows PDBFixer job exposed a launcher-resolution bug: the PATH
 contained `condabin/conda.bat`, whereas the subprocess interface needed the

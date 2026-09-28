@@ -1,0 +1,32 @@
+{
+  "id": "prody",
+  "name": "ProDy",
+  "summary": "Protein structural dynamics, elastic-network modes and comparative structure analysis.",
+  "tasks": ["protein-dynamics-analysis", "protein-structure-comparison", "structure-analysis", "protein-simulation"],
+  "install": {
+    "kind": "conda",
+    "platforms": ["linux", "macos"],
+    "architectures": {"linux": ["x86_64"], "macos": ["x86_64"]},
+    "automatic": true,
+    "environment": "bio-prody",
+    "channel": "conda-forge",
+    "package": "prody=2.6.1",
+    "manual_fallback": {
+      "platforms": ["windows"],
+      "steps": [
+        "The reviewed conda-forge ProDy 2.6.1 release has Linux/macOS x86_64 packages but no native Windows build. Do not run this conda recipe in native Windows.",
+        "If needed, prepare a separate WSL2 Linux environment and rerun plan there, or review the maintainer's Windows installation instructions and compatible packages manually."
+      ],
+      "verify_note": "In the chosen Linux environment, import ProDy and run the small local mode-analysis check. Do not treat a native Windows install as verified by this recipe."
+    }
+  },
+  "verify": {"argv": ["python", "-c", "import numpy as np, prody; g=prody.GNM('synthetic'); g.buildKirchhoff(np.array([[0.,0.,0.],[1.,0.,0.],[0.,1.,0.],[0.,0.,1.]])); g.calcModes(n_modes=1); assert g.numModes()==1; print(prody.__version__)"]},
+  "notes": ["This route runs a tiny local Gaussian network model on synthetic coordinates to check core functionality. It is not molecular-dynamics simulation or validation of biological dynamics. Optional database access, GUI plugins and external applications are outside this installation.", "The pinned conda-forge release has Linux/macOS x86_64 artifacts only. Architecture and solver compatibility must be checked again on the user's machine."],
+  "sources": [
+    {"type": "installation", "url": "https://github.com/prody/ProDy"},
+    {"type": "usage", "url": "https://www.bahargroup.org/prody/manual/reference/dynamics/gnm.html"},
+    {"type": "package-release", "url": "https://api.anaconda.org/release/conda-forge/prody/2.6.1"},
+    {"type": "windows-fallback", "url": "https://learn.microsoft.com/en-us/windows/wsl/install"},
+    {"type": "paper", "url": "https://doi.org/10.1093/bioinformatics/btr168"}
+  ]
+}
